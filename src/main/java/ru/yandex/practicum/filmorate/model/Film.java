@@ -4,22 +4,25 @@ import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
 import java.time.Month;
 
 @Data
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Film {
-    private Long id;
+    Long id;
     @NotBlank(message = "Film name should not be null or empty")
-    private String name;
+    String name;
     @Size(message = "Description length must be less than 200", max = 200)
     @NotBlank(message = "Description should not be null or empty")
-    private String description;
-    private LocalDate releaseDate;
+    String description;
+    LocalDate releaseDate;
     @Positive
-    private long duration;
+    long duration;
 
     @AssertTrue(message = "Release date must be after December 28, 1895")
     public boolean isFilmReleaseDateAfter1895() {
