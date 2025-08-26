@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.Month;
 
@@ -28,7 +29,7 @@ class FilmTest {
         film.setName("Film valid name");
         film.setDescription("Film valid description");
         film.setReleaseDate(LocalDate.now());
-        film.setDuration(100);
+        film.setDuration(Duration.ofMinutes(100));
     }
 
     @Test
@@ -80,13 +81,13 @@ class FilmTest {
 
     @Test
     void testNegativeDuration() {
-        film.setDuration(-1);
+        film.setDuration(Duration.ofMinutes(-1));
         assertFalse(validator.validate(film).isEmpty());
     }
 
     @Test
     void testZeroDuration() {
-        film.setDuration(0);
+        film.setDuration(Duration.ZERO);
         assertFalse(validator.validate(film).isEmpty());
     }
 }
