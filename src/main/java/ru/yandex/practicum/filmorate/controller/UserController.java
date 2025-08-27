@@ -1,63 +1,39 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 
 @RestController
 @RequestMapping("/users")
 @Slf4j
+@RequiredArgsConstructor
 public class UserController {
-    private final Map<Long, User> users = new HashMap<>();
+    private final UserService userService;
 
     @GetMapping
     public Collection<User> findAll() {
-        log.debug("Collection of all users requested");
-        return users.values();
+        log.trace("Collection of all users requested");
+        return userService.findAll();
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public User create(@Valid @RequestBody User user) {
-        user.setId(getNextId());
-        users.put(user.getId(), user);
-        if (user.getName() == null) {
-            user.setName(user.getLogin());
-        }
-
-        log.debug("User created: {}", user);
-
-        return user;
+        log.trace("create new user requested {}", user);
+        return userService.create(user);
     }
 
     @PutMapping
-    public User update(@Valid @RequestBody User user) {
-        if (!users.containsKey(user.getId())) {
-            log.debug("Trying to update user with id {} that does not exist", user.getId());
-            throw new IllegalArgumentException();
-        }
-
-        users.put(user.getId(), user);
-        if (user.getName() == null) {
-            user.setName(user.getLogin());
-        }
-
-        log.debug("User with id {} updated: {}", user.getId(), user);
-
-        return user;
-    }
-
-    private long getNextId() {
-        long currentMaxId = users.keySet()
-                .stream()
-                .mapToLong(id -> id)
-                .max()
-                .orElse(0);
-        return ++currentMaxId;
+    public User update(@RequestBody User user) {
+        log.trace("Update user requested {}", user);
+        return userService.update(user);
     }
 }

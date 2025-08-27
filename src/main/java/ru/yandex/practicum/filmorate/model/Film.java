@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -22,14 +23,16 @@ public class Film {
     @Size(message = "Description length must be less than 200", max = 200)
     @NotBlank(message = "Description should not be null or empty")
     String description;
+    @NotNull(message = "Release date must be present")
     LocalDate releaseDate;
+    @NotNull(message = "Duration must be present")
     @JsonFormat(shape = JsonFormat.Shape.NUMBER_INT, pattern = "MINUTES")
     Duration duration;
 
     @JsonIgnore
     @AssertTrue(message = "Film duration must be positive")
     public boolean isDurationPositive() {
-        if (duration == null) return false;
+        if (duration == null) return true;
         return duration.isPositive();
     }
 

@@ -20,6 +20,6 @@ public class User {
     @NotBlank(message = "Login must not be empty")
     String login;
     String name;
-    @Past
+    @Past(message = "User birthday must be a past date")
     LocalDate birthday;
 }
