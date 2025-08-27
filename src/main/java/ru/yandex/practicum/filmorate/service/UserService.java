@@ -12,6 +12,7 @@ import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -64,8 +65,68 @@ public class UserService {
         return userStorage.update(user);
     }
 
-    public User delete(long id) {
+    public User deleteById(long id) {
         return userStorage.deleteById(id);
     }
 
+    public void addFriend(long userId, long friendId) {
+        User user = userStorage.findById(userId)
+                .orElseThrow(
+                        () -> new NotFoundException("User with id %d not found".formatted(userId))
+                );
+        User userFriend = userStorage.findById(friendId)
+                .orElseThrow(
+                        () -> new NotFoundException("User with id %d not found".formatted(friendId))
+                );
+        user.addFriend(friendId);
+        userFriend.addFriend(userId);
+    }
+
+    public void removeFriend(long userId, long friendId) {
+        User user = userStorage.findById(userId)
+                .orElseThrow(
+                        () -> new NotFoundException("User with id %d not found".formatted(userId))
+                );
+        User userFriend = userStorage.findById(friendId)
+                .orElseThrow(
+                        () -> new NotFoundException("User with id %d not found".formatted(friendId))
+                );
+        user.removeFriend(friendId);
+        userFriend.removeFriend(userId);
+    }
+
+    public Collection<User> getFriends(long userId) {
+        User user = userStorage.findById(userId)
+                .orElseThrow(
+                        () -> new NotFoundException("User with id %d not found".formatted(userId))
+                );
+        Set<Long> friendIds = user.getFriends();
+        return getUsersFromIds(friendIds);
+    }
+
+    public Collection<User> getCommonFriends(long firstUserId, long secondUserId) {
+        User firstUser = userStorage.findById(firstUserId)
+                .orElseThrow(
+                        () -> new NotFoundException("User with id %d not found".formatted(firstUserId))
+                );
+        Collection<User> firstUserFriends = getUsersFromIds(firstUser.getFriends());
+
+        User secondUser = userStorage.findById(secondUserId)
+                .orElseThrow(
+                        () -> new NotFoundException("User with id %d not found".formatted(secondUserId))
+                );
+        Collection<User> secondUserFriends = getUsersFromIds(secondUser.getFriends());
+
+        return firstUserFriends.stream()
+                .filter(secondUserFriends::contains)
+                .toList();
+    }
+
+    private Collection<User> getUsersFromIds(Collection<Long> ids) {
+        return ids.stream()
+                .map(userStorage::findById)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .toList();
+    }
 }
