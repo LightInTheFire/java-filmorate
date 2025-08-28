@@ -39,7 +39,6 @@ public class UserService {
         Optional<User> userOptional = userStorage.findById(newUser.getId());
 
         if (userOptional.isEmpty()) {
-            log.warn("User with id {} not found", newUser.getId());
             throw new NotFoundException("User with id %d not found".formatted(newUser.getId()));
         }
         User user = userOptional.get();
