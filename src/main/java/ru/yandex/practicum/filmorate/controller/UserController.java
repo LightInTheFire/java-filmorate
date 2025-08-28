@@ -4,8 +4,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.model.Marker;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
@@ -17,6 +19,7 @@ import java.util.Optional;
 @RequestMapping("/users")
 @Slf4j
 @RequiredArgsConstructor
+@Validated
 public class UserController {
     private final UserService userService;
 
@@ -43,13 +46,15 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public User create(@Valid @RequestBody User user) {
+    @Validated(Marker.OnCreate.class)
+    public User create(@RequestBody @Valid User user) {
         log.trace("create new user requested {}", user);
         return userService.create(user);
     }
 
     @PutMapping
-    public User update(@RequestBody User user) {
+    @Validated(Marker.OnUpdate.class)
+    public User update(@RequestBody @Valid User user) {
         log.trace("Update user requested {}", user);
         return userService.update(user);
     }

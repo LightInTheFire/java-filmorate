@@ -1,15 +1,13 @@
 package ru.yandex.practicum.filmorate.service;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Past;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
@@ -17,6 +15,7 @@ import java.util.Set;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Validated
 public class UserService {
     private final UserStorage userStorage;
 
@@ -38,10 +37,9 @@ public class UserService {
     public User update(User newUser) {
         Optional<User> userOptional = userStorage.findById(newUser.getId());
 
-        if (userOptional.isEmpty()) {
-            throw new NotFoundException("User with id %d not found".formatted(newUser.getId()));
-        }
-        User user = userOptional.get();
+        User user = userOptional.orElseThrow(
+                () -> new NotFoundException("User with id %d not found".formatted(newUser.getId()))
+        );
 
         if (newUser.getName() != null) {
             user.setName(newUser.getName());
@@ -52,13 +50,11 @@ public class UserService {
         }
 
         if (newUser.getEmail() != null) {
-            @Email(message = "Email must be valid") String email = newUser.getEmail();
-            user.setEmail(email);
+            user.setEmail(newUser.getEmail());
         }
 
         if (newUser.getBirthday() != null) {
-            @Past(message = "User birthday must be a past date") LocalDate birthday = newUser.getBirthday();
-            user.setBirthday(birthday);
+            user.setBirthday(newUser.getBirthday());
         }
 
         return userStorage.update(user);

@@ -20,14 +20,15 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Film {
     Long id;
-    @NotBlank(message = "Film name should not be null or empty")
+    @NotBlank(message = "Film name should not be null or empty", groups = Marker.OnCreate.class)
     String name;
-    @Size(message = "Description length must be less than 200", max = 200)
-    @NotBlank(message = "Description should not be null or empty")
+    @Size(message = "Description length must be less than 200", max = 200,
+            groups = {Marker.OnCreate.class, Marker.OnUpdate.class})
+    @NotBlank(message = "Description should not be null or empty", groups = Marker.OnCreate.class)
     String description;
-    @NotNull(message = "Release date must be present")
+    @NotNull(message = "Release date must be present", groups = Marker.OnCreate.class)
     LocalDate releaseDate;
-    @NotNull(message = "Duration must be present")
+    @NotNull(message = "Duration must be present", groups = Marker.OnCreate.class)
     @JsonFormat(shape = JsonFormat.Shape.NUMBER_INT, pattern = "MINUTES")
     Duration duration;
     Set<Long> usersWhoLiked = new HashSet<>();
@@ -45,14 +46,16 @@ public class Film {
     }
 
     @JsonIgnore
-    @AssertTrue(message = "Film duration must be positive")
+    @AssertTrue(message = "Film duration must be positive",
+            groups = {Marker.OnCreate.class, Marker.OnUpdate.class})
     public boolean isDurationPositive() {
         if (duration == null) return true;
         return duration.isPositive();
     }
 
     @JsonIgnore
-    @AssertTrue(message = "Release date must be after December 28, 1895")
+    @AssertTrue(message = "Release date must be after December 28, 1895",
+            groups = {Marker.OnCreate.class, Marker.OnUpdate.class})
     public boolean isFilmReleaseDateAfter1895() {
         if (releaseDate == null) return true;
         return releaseDate.isAfter(LocalDate.of(1895, Month.DECEMBER, 28));

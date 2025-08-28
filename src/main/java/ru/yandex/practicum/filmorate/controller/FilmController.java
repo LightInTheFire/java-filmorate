@@ -5,9 +5,11 @@ import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Marker;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import java.util.Collection;
@@ -17,6 +19,7 @@ import java.util.Optional;
 @RequestMapping("/films")
 @Slf4j
 @RequiredArgsConstructor
+@Validated
 public class FilmController {
     private final FilmService filmService;
 
@@ -43,13 +46,15 @@ public class FilmController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Film create(@Valid @RequestBody Film film) {
+    @Validated(Marker.OnCreate.class)
+    public Film create(@RequestBody @Valid Film film) {
         log.trace("Create new film requested {}", film);
         return filmService.create(film);
     }
 
     @PutMapping
-    public Film update(@RequestBody Film film) {
+    @Validated(Marker.OnUpdate.class)
+    public Film update(@RequestBody @Valid Film film) {
         log.trace("Update film requested {}", film);
         return filmService.update(film);
     }
