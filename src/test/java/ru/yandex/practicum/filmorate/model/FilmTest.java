@@ -40,31 +40,31 @@ class FilmTest {
     @Test
     void testEmptyName() {
         film.setName("  ");
-        assertFalse(validator.validate(film).isEmpty());
+        assertFalse(validator.validate(film, Marker.OnCreate.class).isEmpty());
     }
 
     @Test
     void testNullName() {
         film.setName(null);
-        assertFalse(validator.validate(film).isEmpty());
+        assertFalse(validator.validate(film, Marker.OnCreate.class).isEmpty());
     }
 
     @Test
     void testEmptyDescription() {
         film.setDescription("  ");
-        assertFalse(validator.validate(film).isEmpty());
+        assertFalse(validator.validate(film, Marker.OnCreate.class).isEmpty());
     }
 
     @Test
     void testNullDescription() {
         film.setDescription(null);
-        assertFalse(validator.validate(film).isEmpty());
+        assertFalse(validator.validate(film, Marker.OnCreate.class).isEmpty());
     }
 
     @Test
     void testVeryLongDescription() {
         film.setDescription("s".repeat(201));
-        assertFalse(validator.validate(film).isEmpty());
+        assertFalse(validator.validate(film, Marker.OnCreate.class).isEmpty());
     }
 
     @Test
@@ -76,18 +76,18 @@ class FilmTest {
     @Test
     void testReleaseDateBefore1895() {
         film.setReleaseDate(LocalDate.of(1895, Month.DECEMBER, 27));
-        assertFalse(validator.validate(film).isEmpty());
+        assertFalse(validator.validate(film, Marker.OnCreate.class).isEmpty());
     }
 
     @Test
     void testNegativeDuration() {
         film.setDuration(Duration.ofMinutes(-1));
-        assertFalse(validator.validate(film).isEmpty());
+        assertFalse(validator.validate(film, Marker.OnCreate.class).isEmpty());
     }
 
     @Test
     void testZeroDuration() {
         film.setDuration(Duration.ZERO);
-        assertFalse(validator.validate(film).isEmpty());
+        assertFalse(validator.validate(film, Marker.OnCreate.class).isEmpty());
     }
 }
