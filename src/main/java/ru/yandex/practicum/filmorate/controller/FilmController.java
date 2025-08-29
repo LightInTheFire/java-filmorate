@@ -74,7 +74,7 @@ public class FilmController {
     @GetMapping("/popular")
     public Collection<Film> findPopular(@RequestParam(defaultValue = "10")
                                         @Positive
-                                        @Valid int count) {
+                                        int count) {
         log.trace("Find popular film requested with count: {}", count);
         return filmService.findFilmsWithTopLikes(count);
     }
