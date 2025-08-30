@@ -37,36 +37,36 @@ class UserTest {
     @Test
     void testNullEmail() {
         user.setEmail(null);
-        assertFalse(validator.validate(user).isEmpty());
+        assertFalse(validator.validate(user, Marker.OnCreate.class).isEmpty());
     }
 
     @Test
     void testEmptyEmail() {
         user.setEmail("  ");
-        assertFalse(validator.validate(user).isEmpty());
+        assertFalse(validator.validate(user, Marker.OnCreate.class).isEmpty());
     }
 
     @Test
     void testInvalidEmail() {
         user.setEmail("это-неправильный?эмейл@");
-        assertFalse(validator.validate(user).isEmpty());
+        assertFalse(validator.validate(user, Marker.OnCreate.class).isEmpty());
     }
 
     @Test
     void testNullLogin() {
         user.setLogin(null);
-        assertFalse(validator.validate(user).isEmpty());
+        assertFalse(validator.validate(user, Marker.OnCreate.class).isEmpty());
     }
 
     @Test
     void testEmptyLogin() {
         user.setLogin("   ");
-        assertFalse(validator.validate(user).isEmpty());
+        assertFalse(validator.validate(user, Marker.OnCreate.class).isEmpty());
     }
 
     @Test
     void testFutureBirthday() {
         user.setBirthday(LocalDate.now());
-        assertFalse(validator.validate(user).isEmpty());
+        assertFalse(validator.validate(user, Marker.OnCreate.class).isEmpty());
     }
 }
