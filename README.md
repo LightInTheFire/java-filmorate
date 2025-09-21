@@ -43,7 +43,7 @@ SELECT f.film_id,
        f.duration_in_minutes,
        m.name                                                     AS mpa_rating,
        (SELECT COUNT(*) FROM likes l WHERE l.film_id = f.film_id) AS likes_count,
-       (SELECT GROUP_CONCAT(g.name SEPARATOR ', ')
+       (SELECT GROUP_CONCAT(g.name)
         FROM film_genres fg
                  JOIN genres g ON fg.genre_id = g.genre_id
         WHERE fg.film_id = f.film_id)                             AS genres
