@@ -24,10 +24,8 @@ public class GenreService {
     }
 
     public GenreDto findById(long id) {
-        return GenreMapper.toGenreDto(
-                genreStorage.findById(id).orElseThrow(
-                        NotFoundException.supplier("Genre with id %d not foud", id)
-                )
-        );
+        return genreStorage.findById(id)
+                .map(GenreMapper::toGenreDto)
+                .orElseThrow(NotFoundException.supplier("Genre with id %d not foud", id));
     }
 }

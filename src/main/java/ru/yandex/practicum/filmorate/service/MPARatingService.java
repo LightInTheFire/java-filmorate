@@ -24,10 +24,8 @@ public class MPARatingService {
     }
 
     public MPARatingDto findById(long mpaId) {
-        return MPARatingMapper.toMPARatingDto(
-                mpaStorage.findById(mpaId).orElseThrow(
-                        NotFoundException.supplier("MPA Rating with id %d not found", mpaId)
-                )
-        );
+        return mpaStorage.findById(mpaId)
+                .map(MPARatingMapper::toMPARatingDto)
+                .orElseThrow(NotFoundException.supplier("MPA Rating with id %d not found", mpaId));
     }
 }
