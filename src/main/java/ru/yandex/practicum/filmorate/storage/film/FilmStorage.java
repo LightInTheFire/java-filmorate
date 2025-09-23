@@ -1,20 +1,10 @@
 package ru.yandex.practicum.filmorate.storage.film;
 
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.storage.Storage;
 
 import java.util.Collection;
-import java.util.Optional;
 
-public interface FilmStorage {
-    Collection<Film> findAll();
-
-    Optional<Film> findById(long id);
-
-    Film create(Film film);
-
-    Film update(Film newFilm);
-
-    Film deleteById(long id);
-
-    boolean existsById(long id);
+public interface FilmStorage extends Storage<Film> {
+    Collection<Film> getTopPopularFilms(int count);
 }

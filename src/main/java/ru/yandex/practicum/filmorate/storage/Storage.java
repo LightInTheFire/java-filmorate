@@ -13,7 +13,7 @@ public interface Storage<T> {
 
     T update(T newT);
 
-    T deleteById(long id);
+    boolean deleteById(long id);
 
-    boolean existsById(long id);
+    void throwIfNotExists(long id);
 }

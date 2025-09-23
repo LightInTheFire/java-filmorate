@@ -1,20 +1,12 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.Storage;
 
 import java.util.Collection;
-import java.util.Optional;
 
-public interface UserStorage {
-    Collection<User> findAll();
+public interface UserStorage extends Storage<User> {
+    Collection<User> getFriendsOfUser(long userId);
 
-    Optional<User> findById(long id);
-
-    User create(User user);
-
-    User update(User newUser);
-
-    User deleteById(long id);
-
-    boolean existsById(long id);
+    Collection<User> getCommonFriendsOfTwoUsers(long userId1, long userId2);
 }
