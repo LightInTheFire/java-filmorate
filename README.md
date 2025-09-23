@@ -41,15 +41,11 @@ SELECT f.film_id,
        f.description,
        f.release_date,
        f.duration_in_minutes,
-       m.name                                                     AS mpa_rating,
-       (SELECT COUNT(*) FROM likes l WHERE l.film_id = f.film_id) AS likes_count,
-       (SELECT GROUP_CONCAT(g.name)
-        FROM film_genres fg
-                 JOIN genres g ON fg.genre_id = g.genre_id
-        WHERE fg.film_id = f.film_id)                             AS genres
+       f.mpa_id
 FROM films f
-         JOIN mpa_ratings m ON f.mpa_id = m.mpa_id
-ORDER BY likes_count DESC
+         LEFT JOIN likes fl ON f.film_id = fl.film_id
+GROUP BY f.film_id, f.name, f.description, f.release_date, f.duration_in_minutes
+ORDER BY COUNT(fl.user_id) DESC, f.film_id 
 LIMIT 10;
 ```
 
@@ -70,8 +66,7 @@ SELECT u.user_id,
 FROM users u
 WHERE u.user_id IN (SELECT f.user_id2
                     FROM friendships f
-                    WHERE f.user_id1 = 1
-                      AND f.status = 'accepted')
+                    WHERE f.user_id1 = 1)
 ORDER BY u.name;
 ```
 
@@ -86,12 +81,10 @@ FROM users u
 WHERE u.user_id IN (SELECT user_id2
                     FROM friendships
                     WHERE user_id1 = 1
-                      AND status = 'accepted'
 
                     INTERSECT
 
                     SELECT user_id2
                     FROM friendships
                     WHERE user_id1 = 2
-                      AND status = 'accepted');
 ```
