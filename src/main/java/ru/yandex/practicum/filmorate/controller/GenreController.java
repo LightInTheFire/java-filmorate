@@ -28,9 +28,7 @@ public class GenreController {
     }
 
     @GetMapping("/{genreId}")
-    public GenreDto findById(@PathVariable
-                             @Positive
-                             long genreId) {
+    public GenreDto findById(@PathVariable @Positive long genreId) {
         log.trace("Find genre with id {} requested", genreId);
         return genreService.findById(genreId);
     }

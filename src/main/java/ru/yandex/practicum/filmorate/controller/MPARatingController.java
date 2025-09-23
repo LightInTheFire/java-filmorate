@@ -28,9 +28,7 @@ public class MPARatingController {
     }
 
     @GetMapping("/{mpaId}")
-    public MPARatingDto findById(@PathVariable
-                                 @Positive
-                                 long mpaId) {
+    public MPARatingDto findById(@PathVariable @Positive long mpaId) {
         log.trace("Find MPARating with id {} requested", mpaId);
         return mpaService.findById(mpaId);
     }
