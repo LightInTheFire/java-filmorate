@@ -6,13 +6,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.model.Marker;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.dto.user.NewUserRequest;
+import ru.yandex.practicum.filmorate.dto.user.UpdateUserRequest;
+import ru.yandex.practicum.filmorate.dto.user.UserDto;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.util.Collection;
-import java.util.Optional;
 
 
 @RestController
@@ -24,37 +23,34 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public Collection<User> findAll() {
+    public Collection<UserDto> findAll() {
         log.trace("Collection of all users requested");
         return userService.findAll();
     }
 
     @GetMapping("/{userId}")
-    public User findById(@PathVariable long userId) {
+    public UserDto findById(@PathVariable long userId) {
         log.trace("Find user by id requested, id: {}", userId);
-        Optional<User> userById = userService.findById(userId);
-        return userById.orElseThrow(
-                () -> new NotFoundException("User with id %d not found".formatted(userId))
-        );
+        return userService.findById(userId);
     }
 
     @DeleteMapping("/{userId}")
-    public User deleteById(@PathVariable long userId) {
+    public boolean deleteById(@PathVariable long userId) {
         log.trace("Delete user by id requested, id: {}", userId);
         return userService.deleteById(userId);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Validated(Marker.OnCreate.class)
-    public User create(@RequestBody @Valid User user) {
+    @Validated
+    public UserDto create(@RequestBody @Valid NewUserRequest user) {
         log.trace("create new user requested {}", user);
         return userService.create(user);
     }
 
     @PutMapping
-    @Validated(Marker.OnUpdate.class)
-    public User update(@RequestBody @Valid User user) {
+    @Validated
+    public UserDto update(@RequestBody @Valid UpdateUserRequest user) {
         log.trace("Update user requested {}", user);
         return userService.update(user);
     }
@@ -72,14 +68,14 @@ public class UserController {
     }
 
     @GetMapping("/{id}/friends")
-    public Collection<User> findFriends(@PathVariable long id) {
+    public Collection<UserDto> findFriends(@PathVariable long id) {
         log.trace("Find friends requested for id {}", id);
-        return userService.getFriends(id);
+        return userService.findFriends(id);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
-    public Collection<User> findCommonFriends(@PathVariable long id, @PathVariable long otherId) {
+    public Collection<UserDto> findCommonFriends(@PathVariable long id, @PathVariable long otherId) {
         log.trace("Find common friends requested for id {}, other id: {}", id, otherId);
-        return userService.getCommonFriends(id, otherId);
+        return userService.findAllCommonFriends(id, otherId);
     }
 }

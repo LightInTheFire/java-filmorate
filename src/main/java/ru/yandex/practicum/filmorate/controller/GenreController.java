@@ -18,7 +18,6 @@ import java.util.Collection;
 public class GenreController {
     private final GenreService genreService;
 
-
     @GetMapping
     public Collection<GenreDto> findAll() {
         log.trace("Collection of all genres requested");
