@@ -30,7 +30,7 @@ public class BaseStorage<T> {
         return jdbcTemplate.query(query, rowMapper, params);
     }
 
-    protected boolean deleteQuery(String query, long id) {
+    protected boolean deleteQuery(String query, Object... id) {
         int rowsDeleted = jdbcTemplate.update(query, id);
         return rowsDeleted > 0;
     }
@@ -38,7 +38,7 @@ public class BaseStorage<T> {
     protected void updateQuery(String query, Object... params) {
         int rowsUpdated = jdbcTemplate.update(query, params);
         if (rowsUpdated == 0) {
-            throw new InternalServerException("Не удалось обновить данные");
+            throw new InternalServerException("Error while executing query");
         }
     }
 
@@ -58,7 +58,31 @@ public class BaseStorage<T> {
         if (id != null) {
             return id;
         } else {
-            throw new InternalServerException("Не удалось сохранить данные");
+            throw new InternalServerException("Error while executing query");
         }
+    }
+
+    protected void insertSimpleQuery(String query, Object... params) {
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection
+                    .prepareStatement(query);
+            for (int idx = 0; idx < params.length; idx++) {
+                ps.setObject(idx + 1, params[idx]);
+            }
+            return ps;
+        });
+
+    }
+
+    protected boolean checkExists(String query, Object... params) {
+        Boolean result = jdbcTemplate.queryForObject(query,
+                ((rs, rowNum) -> rs.getBoolean(1)),
+                params);
+
+        if (result == null) {
+            throw new InternalServerException("Error while executing query");
+        }
+
+        return result;
     }
 }
