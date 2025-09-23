@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 import ru.yandex.practicum.filmorate.dto.user.NewUserRequest;
 import ru.yandex.practicum.filmorate.dto.user.UpdateUserRequest;
 import ru.yandex.practicum.filmorate.dto.user.UserDto;
@@ -19,7 +18,6 @@ import java.util.Collection;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@Validated
 public class UserService {
     @Qualifier("userDBRepository")
     private final UserStorage userStorage;

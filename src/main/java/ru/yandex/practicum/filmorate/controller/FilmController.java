@@ -29,13 +29,17 @@ public class FilmController {
     }
 
     @GetMapping("/{filmId}")
-    public FilmDto findById(@PathVariable long filmId) {
+    public FilmDto findById(@PathVariable
+                            @Positive
+                            long filmId) {
         log.trace("Find film by id requested, id: {}", filmId);
         return filmService.findById(filmId);
     }
 
     @DeleteMapping("/{filmId}")
-    public boolean deleteById(@PathVariable long filmId) {
+    public boolean deleteById(@PathVariable
+                              @Positive
+                              long filmId) {
         log.trace("Delete film by id requested, id: {}", filmId);
         return filmService.deleteById(filmId);
     }
@@ -56,13 +60,22 @@ public class FilmController {
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public void addLike(@PathVariable long id, @PathVariable long userId) {
+    public void addLike(@PathVariable
+                        @Positive
+                        long id, @PathVariable
+                        @Positive
+                        long userId) {
         log.trace("Add like requested film id: {}, user id: {}", id, userId);
         filmService.addLike(id, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public void deleteLike(@PathVariable long id, @PathVariable long userId) {
+    public void deleteLike(@PathVariable
+                           @Positive
+                           long id,
+                           @PathVariable
+                           @Positive
+                           long userId) {
         log.trace("Delete like requested film id: {}, user id: {}", id, userId);
         filmService.removeLike(id, userId);
     }

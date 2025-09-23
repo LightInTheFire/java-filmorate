@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -29,13 +30,17 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public UserDto findById(@PathVariable long userId) {
+    public UserDto findById(@PathVariable
+                            @Positive
+                            long userId) {
         log.trace("Find user by id requested, id: {}", userId);
         return userService.findById(userId);
     }
 
     @DeleteMapping("/{userId}")
-    public boolean deleteById(@PathVariable long userId) {
+    public boolean deleteById(@PathVariable
+                              @Positive
+                              long userId) {
         log.trace("Delete user by id requested, id: {}", userId);
         return userService.deleteById(userId);
     }
@@ -56,25 +61,42 @@ public class UserController {
     }
 
     @PutMapping("/{id}/friends/{friendId}")
-    public void addFriend(@PathVariable long id, @PathVariable long friendId) {
+    public void addFriend(@PathVariable
+                          @Positive
+                          long id,
+                          @PathVariable
+                          @Positive
+                          long friendId) {
         log.trace("Add friend requested for id {}, friend id: {}", id, friendId);
         userService.addFriend(id, friendId);
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
-    public void deleteFriend(@PathVariable long id, @PathVariable long friendId) {
+    public void deleteFriend(@PathVariable
+                             @Positive
+                             long id,
+                             @PathVariable
+                             @Positive
+                             long friendId) {
         log.trace("Delete friend requested for id {}, friend id: {}", id, friendId);
         userService.removeFriend(id, friendId);
     }
 
     @GetMapping("/{id}/friends")
-    public Collection<UserDto> findFriends(@PathVariable long id) {
+    public Collection<UserDto> findFriends(@PathVariable
+                                           @Positive
+                                           long id) {
         log.trace("Find friends requested for id {}", id);
         return userService.findFriends(id);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
-    public Collection<UserDto> findCommonFriends(@PathVariable long id, @PathVariable long otherId) {
+    public Collection<UserDto> findCommonFriends(@PathVariable
+                                                 @Positive
+                                                 long id,
+                                                 @PathVariable
+                                                 @Positive
+                                                 long otherId) {
         log.trace("Find common friends requested for id {}, other id: {}", id, otherId);
         return userService.findAllCommonFriends(id, otherId);
     }
