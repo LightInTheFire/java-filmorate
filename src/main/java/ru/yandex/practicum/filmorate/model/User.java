@@ -6,8 +6,8 @@ import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Builder
@@ -19,14 +19,10 @@ public class User {
     String name;
     LocalDate birthday;
     @Builder.Default
-    Map<Long, FriendshipStatus> friends = new HashMap<>();
+    Set<Long> friends = new HashSet<>();
 
     public void addFriend(Long friendId) {
-        friends.put(friendId, FriendshipStatus.PENDING);
-    }
-
-    public void approveFriend(Long friendId) {
-        friends.put(friendId, FriendshipStatus.ACCEPTED);
+        friends.add(friendId);
     }
 
     public void removeFriend(Long friendId) {

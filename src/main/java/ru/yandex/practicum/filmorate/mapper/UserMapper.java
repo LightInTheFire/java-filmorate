@@ -1,15 +1,15 @@
 package ru.yandex.practicum.filmorate.mapper;
 
 import lombok.experimental.UtilityClass;
-import ru.yandex.practicum.filmorate.dto.NewUserRequest;
-import ru.yandex.practicum.filmorate.dto.UpdateUserRequest;
-import ru.yandex.practicum.filmorate.dto.UserDto;
+import ru.yandex.practicum.filmorate.dto.user.NewUserRequest;
+import ru.yandex.practicum.filmorate.dto.user.UpdateUserRequest;
+import ru.yandex.practicum.filmorate.dto.user.UserDto;
 import ru.yandex.practicum.filmorate.model.User;
 
 
 @UtilityClass
 public class UserMapper {
-    public UserDto mapToUserDto(User user) {
+    public UserDto toUserDto(User user) {
         return UserDto.builder()
                 .id(user.getId())
                 .email(user.getEmail())
@@ -41,9 +41,10 @@ public class UserMapper {
             user.setName(request.getName());
         }
 
-        if (request.hasBirthDate()) {
-            user.setBirthday(request.getBirthDate());
+        if (request.hasBirthday()) {
+            user.setBirthday(request.getBirthday());
         }
+
         return user;
     }
 }

@@ -9,4 +9,8 @@ public class MPARatingMapper {
     public MPARatingDto toMPARatingDto(MPARating mparating) {
         return new MPARatingDto(mparating.id(), mparating.name());
     }
+
+    public static MPARating toMPARating(MPARatingDto mpa) {
+        return new MPARating(mpa.id(), mpa.name());
+    }
 }
