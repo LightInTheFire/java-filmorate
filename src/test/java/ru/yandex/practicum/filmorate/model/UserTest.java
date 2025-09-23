@@ -5,6 +5,7 @@ import jakarta.validation.Validator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.yandex.practicum.filmorate.dto.user.NewUserRequest;
 
 import java.time.LocalDate;
 
@@ -13,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class UserTest {
     private static Validator validator;
-    private static User user;
+    private static NewUserRequest user;
 
     @BeforeAll
     static void setUp() {
@@ -22,8 +23,7 @@ class UserTest {
 
     @BeforeEach
     void setUpEach() {
-        user = new User();
-        user.setId(1L);
+        user = new NewUserRequest();
         user.setEmail("johndoe@example.com");
         user.setLogin("johndoe");
         user.setBirthday(LocalDate.of(1980, 1, 1));
@@ -37,36 +37,36 @@ class UserTest {
     @Test
     void testNullEmail() {
         user.setEmail(null);
-        assertFalse(validator.validate(user, Marker.OnCreate.class).isEmpty());
+        assertFalse(validator.validate(user).isEmpty());
     }
 
     @Test
     void testEmptyEmail() {
         user.setEmail("  ");
-        assertFalse(validator.validate(user, Marker.OnCreate.class).isEmpty());
+        assertFalse(validator.validate(user).isEmpty());
     }
 
     @Test
     void testInvalidEmail() {
         user.setEmail("это-неправильный?эмейл@");
-        assertFalse(validator.validate(user, Marker.OnCreate.class).isEmpty());
+        assertFalse(validator.validate(user).isEmpty());
     }
 
     @Test
     void testNullLogin() {
         user.setLogin(null);
-        assertFalse(validator.validate(user, Marker.OnCreate.class).isEmpty());
+        assertFalse(validator.validate(user).isEmpty());
     }
 
     @Test
     void testEmptyLogin() {
         user.setLogin("   ");
-        assertFalse(validator.validate(user, Marker.OnCreate.class).isEmpty());
+        assertFalse(validator.validate(user).isEmpty());
     }
 
     @Test
     void testFutureBirthday() {
         user.setBirthday(LocalDate.now());
-        assertFalse(validator.validate(user, Marker.OnCreate.class).isEmpty());
+        assertFalse(validator.validate(user).isEmpty());
     }
 }
