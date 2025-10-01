@@ -1,5 +1,7 @@
 package ru.yandex.practicum.filmorate.dto.film;
 
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -30,5 +32,6 @@ public class NewFilmRequest {
     @Positive(message = "Film duration must be positive")
     Integer duration;
     MPARatingDto mpa;
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     List<GenreDto> genres = new ArrayList<>();
 }

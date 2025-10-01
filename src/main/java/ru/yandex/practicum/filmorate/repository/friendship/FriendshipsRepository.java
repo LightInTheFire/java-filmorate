@@ -1,6 +1,6 @@
-package ru.yandex.practicum.filmorate.storage.friendship;
+package ru.yandex.practicum.filmorate.repository.friendship;
 
-public interface FriendshipsStorage {
+public interface FriendshipsRepository {
     void addFriendship(long userId, long friendId);
 
     void removeFriendship(long userId, long friendId);

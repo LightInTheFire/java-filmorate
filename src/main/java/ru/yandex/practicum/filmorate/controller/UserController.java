@@ -36,9 +36,9 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}")
-    public boolean deleteById(@PathVariable @Positive long userId) {
+    public void deleteById(@PathVariable @Positive long userId) {
         log.trace("Delete user by id requested, id: {}", userId);
-        return userService.deleteById(userId);
+        userService.deleteById(userId);
     }
 
     @PostMapping

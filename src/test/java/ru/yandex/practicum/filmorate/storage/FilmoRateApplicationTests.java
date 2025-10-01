@@ -7,8 +7,9 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.user.UserDBRepository;
-import ru.yandex.practicum.filmorate.storage.user.UserRowMapper;
+import ru.yandex.practicum.filmorate.repository.user.JdbcUserRepository;
+import ru.yandex.practicum.filmorate.repository.user.UserRepository;
+import ru.yandex.practicum.filmorate.repository.user.UserRowMapper;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -18,20 +19,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 @JdbcTest
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-@Import({UserDBRepository.class, UserRowMapper.class})
+@Import({JdbcUserRepository.class, UserRowMapper.class})
 public class FilmoRateApplicationTests {
-    private final UserDBRepository userStorage;
+    private final UserRepository userRepository;
 
     @Test
     public void testFindUserById() {
-        userStorage.create(User.builder()
+        userRepository.save(User.builder()
                 .name("test")
                 .login("test")
                 .email("correct@email")
                 .birthday(LocalDate.of(1980, 1, 1))
                 .build());
 
-        Optional<User> userOptional = userStorage.findById(1);
+        Optional<User> userOptional = userRepository.findById(1);
 
         assertThat(userOptional)
                 .isPresent()

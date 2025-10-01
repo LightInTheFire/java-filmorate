@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dto.mparating.MPARatingDto;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.mapper.MPARatingMapper;
-import ru.yandex.practicum.filmorate.storage.mparating.MPARatingStorage;
+import ru.yandex.practicum.filmorate.repository.mparating.MPARatingRepository;
 
 import java.util.Collection;
 
@@ -14,17 +14,17 @@ import java.util.Collection;
 @Slf4j
 @RequiredArgsConstructor
 public class MPARatingService {
-    private final MPARatingStorage mpaStorage;
+    private final MPARatingRepository mpaRepository;
 
     public Collection<MPARatingDto> findAll() {
-        return mpaStorage.findAll()
+        return mpaRepository.findAll()
                 .stream()
                 .map(MPARatingMapper::toMPARatingDto)
                 .toList();
     }
 
     public MPARatingDto findById(long mpaId) {
-        return mpaStorage.findById(mpaId)
+        return mpaRepository.findById(mpaId)
                 .map(MPARatingMapper::toMPARatingDto)
                 .orElseThrow(NotFoundException.supplier("MPA Rating with id %d not found", mpaId));
     }

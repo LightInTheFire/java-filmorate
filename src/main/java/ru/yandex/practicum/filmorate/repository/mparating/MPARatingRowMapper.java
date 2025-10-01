@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage.mparating;
+package ru.yandex.practicum.filmorate.repository.mparating;
 
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
@@ -11,9 +11,9 @@ import java.sql.SQLException;
 public class MPARatingRowMapper implements RowMapper<MPARating> {
     @Override
     public MPARating mapRow(ResultSet rs, int rowNum) throws SQLException {
-        return new MPARating(
-                rs.getLong("mpa_id"),
-                rs.getString("name")
-        );
+        return MPARating.builder()
+                .id(rs.getLong("mpa_id"))
+                .name(rs.getString("name"))
+                .build();
     }
 }

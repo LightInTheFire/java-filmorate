@@ -1,6 +1,6 @@
-package ru.yandex.practicum.filmorate.storage.like;
+package ru.yandex.practicum.filmorate.repository.like;
 
-public interface LikesStorage {
+public interface LikesRepository {
     void addLike(long userId, long filmId);
 
     void removeLike(long userId, long filmId);

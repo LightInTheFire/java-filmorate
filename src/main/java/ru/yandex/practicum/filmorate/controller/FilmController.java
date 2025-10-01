@@ -35,9 +35,9 @@ public class FilmController {
     }
 
     @DeleteMapping("/{filmId}")
-    public boolean deleteById(@PathVariable @Positive long filmId) {
+    public void deleteById(@PathVariable @Positive long filmId) {
         log.trace("Delete film by id requested, id: {}", filmId);
-        return filmService.deleteById(filmId);
+        filmService.deleteById(filmId);
     }
 
     @PostMapping

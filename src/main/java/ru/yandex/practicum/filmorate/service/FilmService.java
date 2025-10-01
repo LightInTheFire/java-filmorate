@@ -1,79 +1,131 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dto.film.FilmDto;
 import ru.yandex.practicum.filmorate.dto.film.NewFilmRequest;
 import ru.yandex.practicum.filmorate.dto.film.UpdateFilmRequest;
+import ru.yandex.practicum.filmorate.dto.genre.GenreDto;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.mapper.FilmMapper;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.like.LikesStorage;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.repository.film.FilmRepository;
+import ru.yandex.practicum.filmorate.repository.genre.GenreRepository;
+import ru.yandex.practicum.filmorate.repository.like.LikesRepository;
+import ru.yandex.practicum.filmorate.repository.mparating.MPARatingRepository;
+import ru.yandex.practicum.filmorate.repository.user.UserRepository;
 
 import java.util.Collection;
+import java.util.List;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class FilmService {
-    @Qualifier("filmDBRepository")
-    private final FilmStorage filmStorage;
-    @Qualifier("userDBRepository")
-    private final UserStorage userStorage;
-    private final LikesStorage likesStorage;
+    FilmRepository filmRepository;
+    UserRepository userRepository;
+    LikesRepository likesRepository;
+    GenreRepository genreRepository;
+    MPARatingRepository mpaRepository;
 
     public Collection<FilmDto> findAll() {
-        return filmStorage.findAll()
+        return filmRepository.findAll()
                 .stream()
                 .map(FilmMapper::toFilmDto)
                 .toList();
     }
 
     public FilmDto findById(long id) {
-        return filmStorage.findById(id)
+        return filmRepository.findById(id)
                 .map(FilmMapper::toFilmDto)
                 .orElseThrow(NotFoundException.supplier("Film with id %d not found", id));
     }
 
     public FilmDto create(NewFilmRequest request) {
         Film film = FilmMapper.toFilm(request);
-        film = filmStorage.create(film);
+
+        throwIfMpaRatingNotFound(request.getMpa().id());
+        List<Long> genreIds = request.getGenres().stream()
+                .distinct()
+                .map(GenreDto::id)
+                .toList();
+
+        List<Genre> genres = genreRepository.getByIds(genreIds);
+
+        if (genreIds.size() != genres.size()) {
+            throw new NotFoundException("No such genres found");
+        }
+
+        film = filmRepository.save(film);
         return FilmMapper.toFilmDto(film);
     }
 
     public FilmDto update(UpdateFilmRequest request) {
-        Film film = filmStorage.findById(request.getId()).orElseThrow(
+        Film film = filmRepository.findById(request.getId()).orElseThrow(
                 NotFoundException.supplier("Film with id %d not found", request.getId())
         );
+
+        throwIfMpaRatingNotFound(request.getMpa().id());
+
+        if (request.hasGenres()) {
+            List<Long> genreIds = request.getGenres().stream()
+                    .distinct()
+                    .map(GenreDto::id)
+                    .toList();
+
+            List<Genre> genres = genreRepository.getByIds(genreIds);
+
+            if (genreIds.size() != genres.size()) {
+                throw new NotFoundException("No such genres found");
+            }
+        }
+
         film = FilmMapper.updateFilmFields(film, request);
-        film = filmStorage.update(film);
+
+        filmRepository.update(film);
         return FilmMapper.toFilmDto(film);
     }
 
-    public boolean deleteById(long id) {
-        return filmStorage.deleteById(id);
+    public void deleteById(long id) {
+        filmRepository.deleteById(id);
     }
 
     public void addLike(long filmId, long userId) {
-        userStorage.throwIfNotExists(userId);
-        filmStorage.throwIfNotExists(filmId);
-        likesStorage.addLike(userId, filmId);
+        throwIfFilmNotFound(filmId);
+        throwIfUserNotFound(userId);
+        likesRepository.addLike(userId, filmId);
     }
 
     public void removeLike(long filmId, long userId) {
-        userStorage.throwIfNotExists(userId);
-        filmStorage.throwIfNotExists(filmId);
-        likesStorage.removeLike(userId, filmId);
+        throwIfFilmNotFound(filmId);
+        throwIfUserNotFound(userId);
+        likesRepository.removeLike(userId, filmId);
     }
 
     public Collection<FilmDto> findFilmsWithTopLikes(int count) {
-        return filmStorage.getTopPopularFilms(count)
+        return filmRepository.findTopPopularFilms(count)
                 .stream()
                 .map(FilmMapper::toFilmDto)
                 .toList();
+    }
+
+    private void throwIfUserNotFound(long userId) {
+        userRepository.findById(userId)
+                .orElseThrow(NotFoundException.supplier("User with id %d not found", userId));
+    }
+
+    private void throwIfFilmNotFound(long filmId) {
+        filmRepository.findById(filmId)
+                .orElseThrow(NotFoundException.supplier("Film with id %d not found", filmId));
+    }
+
+    private void throwIfMpaRatingNotFound(long mpaRatingId) {
+        mpaRepository.findById(mpaRatingId)
+                .orElseThrow(NotFoundException.supplier("MPA rating with id %d not found", mpaRatingId));
     }
 }
