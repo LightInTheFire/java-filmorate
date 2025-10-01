@@ -6,10 +6,8 @@ import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Data
 @Builder
@@ -26,13 +24,7 @@ public class Film {
     @Builder.Default
     Set<Long> usersWhoLiked = new HashSet<>();
 
-    public void addAllGenresIds(Collection<Long> genres) {
-        this.genres.addAll(genres.stream()
-                .map(genreId -> new Genre(genreId, null))
-                .collect(Collectors.toSet()));
-    }
-
-    public void addAllGenres(Collection<Genre> genres) {
-        this.genres.addAll(genres);
+    public void addGenre(Genre genre) {
+        this.genres.add(genre);
     }
 }

@@ -22,7 +22,7 @@ public class FilmMapper {
                 .mpa(MPARatingMapper.toMPARatingDto(film.getMpaRating()))
                 .genres(film.getGenres()
                         .stream()
-                        .map(genre -> new GenreDto(genre.id(), genre.name()))
+                        .map(genre -> new GenreDto(genre.getId(), genre.getName()))
                         .toList())
                 .build();
     }
@@ -36,7 +36,10 @@ public class FilmMapper {
                 .mpaRating(MPARatingMapper.toMPARating(request.getMpa()))
                 .genres(request.getGenres()
                         .stream()
-                        .map(genreDto -> new Genre(genreDto.id(), genreDto.name()))
+                        .map(genreDto -> Genre.builder()
+                                .id(genreDto.id())
+                                .name(genreDto.name())
+                                .build())
                         .collect(Collectors.toSet()))
                 .build();
     }
@@ -59,9 +62,8 @@ public class FilmMapper {
         }
 
         if (request.hasGenres()) {
-            film.addAllGenresIds(request.getGenres()
-                    .stream()
-                    .map(GenreDto::id)
+            film.setGenres(request.getGenres().stream()
+                    .map(GenreMapper::toGenre)
                     .collect(Collectors.toSet()));
         }
 

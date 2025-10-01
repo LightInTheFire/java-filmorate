@@ -1,7 +1,11 @@
 package ru.yandex.practicum.filmorate.model;
 
-public record MPARating(Long id, String name) {
-    public MPARating(Long id) {
-        this(id, null);
-    }
+import lombok.Builder;
+import lombok.Data;
+
+@Data
+@Builder
+public class MPARating {
+    private Long id;
+    private String name;
 }

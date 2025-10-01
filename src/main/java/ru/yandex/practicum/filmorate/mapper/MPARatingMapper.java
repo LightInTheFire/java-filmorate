@@ -7,10 +7,13 @@ import ru.yandex.practicum.filmorate.model.MPARating;
 @UtilityClass
 public class MPARatingMapper {
     public MPARatingDto toMPARatingDto(MPARating mparating) {
-        return new MPARatingDto(mparating.id(), mparating.name());
+        return new MPARatingDto(mparating.getId(), mparating.getName());
     }
 
     public static MPARating toMPARating(MPARatingDto mpa) {
-        return new MPARating(mpa.id(), mpa.name());
+        return MPARating.builder()
+                .id(mpa.id())
+                .name(mpa.name())
+                .build();
     }
 }
