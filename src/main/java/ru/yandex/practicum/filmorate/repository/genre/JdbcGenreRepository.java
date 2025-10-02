@@ -18,8 +18,8 @@ public class JdbcGenreRepository implements GenreRepository {
     private final RowMapper<Genre> rowMapper;
 
     public Optional<Genre> findById(long id) {
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("id", id);
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("id", id);
 
         List<Genre> genres = jdbc.query("SELECT * FROM genres WHERE genre_id = :id",
                 params,
@@ -34,8 +34,8 @@ public class JdbcGenreRepository implements GenreRepository {
 
     @Override
     public List<Genre> getByIds(List<Long> genreIds) {
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("list", genreIds);
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("list", genreIds);
         return jdbc.query("SELECT * FROM genres WHERE genre_id IN (:list)", params, rowMapper);
     }
 }

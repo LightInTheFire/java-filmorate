@@ -27,9 +27,8 @@ public class JdbcFriendshipsRepository implements FriendshipsRepository {
     }
 
     private MapSqlParameterSource getParameterMap(long userId, long friendId) {
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("user_id1", userId);
-        params.addValue("user_id2", friendId);
-        return params;
+        return new MapSqlParameterSource()
+        .addValue("user_id1", userId)
+        .addValue("user_id2", friendId);
     }
 }

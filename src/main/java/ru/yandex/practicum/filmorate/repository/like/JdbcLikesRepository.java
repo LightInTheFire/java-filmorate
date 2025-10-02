@@ -27,9 +27,8 @@ public class JdbcLikesRepository implements LikesRepository {
     }
 
     private MapSqlParameterSource getParameterMap(long userId, long filmId) {
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("user_id", userId);
-        params.addValue("film_id", filmId);
-        return params;
+        return new MapSqlParameterSource()
+        .addValue("user_id", userId)
+        .addValue("film_id", filmId);
     }
 }

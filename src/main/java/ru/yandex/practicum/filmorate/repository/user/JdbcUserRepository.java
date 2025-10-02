@@ -20,8 +20,8 @@ public class JdbcUserRepository implements UserRepository {
 
     @Override
     public Optional<User> findById(long id) {
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("id", id);
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("id", id);
 
         List<User> users = jdbc.query("SELECT * FROM users WHERE user_id = :id",
                 params,
@@ -38,11 +38,11 @@ public class JdbcUserRepository implements UserRepository {
     @Override
     public User save(User user) {
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("email", user.getEmail());
-        params.addValue("login", user.getLogin());
-        params.addValue("name", user.getName());
-        params.addValue("birthday", user.getBirthday());
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("email", user.getEmail())
+                .addValue("login", user.getLogin())
+                .addValue("name", user.getName())
+                .addValue("birthday", user.getBirthday());
 
         jdbc.update("""
                         INSERT INTO users (email, login, name, birthday)
@@ -55,12 +55,12 @@ public class JdbcUserRepository implements UserRepository {
 
     @Override
     public void update(User user) {
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("email", user.getEmail());
-        params.addValue("login", user.getLogin());
-        params.addValue("name", user.getName());
-        params.addValue("birthday", user.getBirthday());
-        params.addValue("id", user.getId());
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("email", user.getEmail())
+                .addValue("login", user.getLogin())
+                .addValue("name", user.getName())
+                .addValue("birthday", user.getBirthday())
+                .addValue("id", user.getId());
         jdbc.update("""
                 UPDATE users
                 SET email = :email, login = :login, name = :name, birthday = :birthday
@@ -69,15 +69,15 @@ public class JdbcUserRepository implements UserRepository {
 
     @Override
     public void deleteById(long id) {
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("id", id);
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("id", id);
         jdbc.update("DELETE FROM users WHERE user_id = :id", params);
     }
 
     @Override
     public Collection<User> findAllFriends(long userId) {
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("user_id", userId);
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("user_id", userId);
 
         return jdbc.query("""
                         SELECT *
@@ -90,20 +90,20 @@ public class JdbcUserRepository implements UserRepository {
 
     @Override
     public Collection<User> findAllCommonFriends(long userId1, long userId2) {
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("user_id1", userId1);
-        params.addValue("user_id2", userId2);
+        MapSqlParameterSource params = new MapSqlParameterSource()
+        .addValue("user_id1", userId1)
+        .addValue("user_id2", userId2);
 
         return jdbc.query("""
-                SELECT *
-                FROM users u
-                WHERE u.user_id IN (SELECT user_id2
-                                    FROM friendships
-                                    WHERE user_id1 = :user_id1
-                                    INTERSECT
-                                    SELECT user_id2
-                                    FROM friendships
-                                    WHERE user_id1 = :user_id2)""",
+                        SELECT *
+                        FROM users u
+                        WHERE u.user_id IN (SELECT user_id2
+                                            FROM friendships
+                                            WHERE user_id1 = :user_id1
+                                            INTERSECT
+                                            SELECT user_id2
+                                            FROM friendships
+                                            WHERE user_id1 = :user_id2)""",
                 params, rowMapper);
     }
 }

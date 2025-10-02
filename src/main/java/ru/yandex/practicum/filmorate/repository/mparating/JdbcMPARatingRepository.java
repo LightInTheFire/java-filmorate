@@ -19,8 +19,8 @@ public class JdbcMPARatingRepository implements MPARatingRepository {
 
     @Override
     public Optional<MPARating> findById(long id) {
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("id", id);
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("id", id);
 
         List<MPARating> mpaRatings = jdbc.query("SELECT * FROM mpa_ratings WHERE mpa_id = :id",
                 params,

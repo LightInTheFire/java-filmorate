@@ -26,8 +26,8 @@ public class JdbcFilmRepository implements FilmRepository {
 
     @Override
     public Optional<Film> findById(long id) {
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("id", id);
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("id", id);
 
         List<Film> films = jdbc.query("""
                         SELECT f.film_id,
@@ -112,8 +112,8 @@ public class JdbcFilmRepository implements FilmRepository {
                 SET name = :name, description = :description, release_date = :release_date,
                 duration_in_minutes = :duration, mpa_id = :mpa_id
                 WHERE film_id = :film_id""";
-        MapSqlParameterSource params = prepareParamMap(film);
-        params.addValue("film_id", film.getId());
+        MapSqlParameterSource params = prepareParamMap(film)
+                .addValue("film_id", film.getId());
         jdbc.update(updateFilmSql, params);
 
         String deleteFilmGenresSql = """
@@ -127,8 +127,8 @@ public class JdbcFilmRepository implements FilmRepository {
 
     @Override
     public void deleteById(long id) {
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("id", id);
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("id", id);
         jdbc.update("DELETE FROM films WHERE film_id = :id", params);
     }
 
@@ -152,8 +152,8 @@ public class JdbcFilmRepository implements FilmRepository {
                 GROUP BY f.film_id, f.name, g.genre_id
                 ORDER BY COUNT(fl.user_id) DESC, f.film_id
                 LIMIT :count""";
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("count", count);
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("count", count);
 
         return jdbc.query(selectTopFilmsSql, params, filmResultSetExtractor);
     }
@@ -174,12 +174,11 @@ public class JdbcFilmRepository implements FilmRepository {
     }
 
     private MapSqlParameterSource prepareParamMap(Film film) {
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("name", film.getName());
-        params.addValue("description", film.getDescription());
-        params.addValue("release_date", film.getReleaseDate());
-        params.addValue("duration", film.getDuration());
-        params.addValue("mpa_id", film.getMpaRating().getId());
-        return params;
+        return new MapSqlParameterSource()
+        .addValue("name", film.getName())
+        .addValue("description", film.getDescription())
+        .addValue("release_date", film.getReleaseDate())
+        .addValue("duration", film.getDuration())
+        .addValue("mpa_id", film.getMpaRating().getId());
     }
 }
