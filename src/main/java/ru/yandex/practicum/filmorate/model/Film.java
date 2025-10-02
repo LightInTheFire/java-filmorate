@@ -1,63 +1,30 @@
 package ru.yandex.practicum.filmorate.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.validation.constraints.AssertTrue;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
-import java.time.Duration;
 import java.time.LocalDate;
-import java.time.Month;
 import java.util.HashSet;
 import java.util.Set;
 
 @Data
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Film {
     Long id;
-    @NotBlank(message = "Film name should not be null or empty", groups = Marker.OnCreate.class)
     String name;
-    @Size(message = "Description length must be less than 200", max = 200,
-            groups = {Marker.OnCreate.class, Marker.OnUpdate.class})
-    @NotBlank(message = "Description should not be null or empty", groups = Marker.OnCreate.class)
     String description;
-    @NotNull(message = "Release date must be present", groups = Marker.OnCreate.class)
     LocalDate releaseDate;
-    @NotNull(message = "Duration must be present", groups = Marker.OnCreate.class)
-    @JsonFormat(shape = JsonFormat.Shape.NUMBER_INT, pattern = "MINUTES")
-    Duration duration;
+    Integer duration;
+    MPARating mpaRating;
+    @Builder.Default
+    Set<Genre> genres = new HashSet<>();
+    @Builder.Default
     Set<Long> usersWhoLiked = new HashSet<>();
 
-    public void addUserLike(Long userId) {
-        usersWhoLiked.add(userId);
-    }
-
-    public void removeUserLike(Long userId) {
-        usersWhoLiked.remove(userId);
-    }
-
-    public int getLikesCount() {
-        return usersWhoLiked.size();
-    }
-
-    @JsonIgnore
-    @AssertTrue(message = "Film duration must be positive",
-            groups = {Marker.OnCreate.class, Marker.OnUpdate.class})
-    public boolean isDurationPositive() {
-        if (duration == null) return true;
-        return duration.isPositive();
-    }
-
-    @JsonIgnore
-    @AssertTrue(message = "Release date must be after December 28, 1895",
-            groups = {Marker.OnCreate.class, Marker.OnUpdate.class})
-    public boolean isFilmReleaseDateAfter1895() {
-        if (releaseDate == null) return true;
-        return releaseDate.isAfter(LocalDate.of(1895, Month.DECEMBER, 28));
+    public void addGenre(Genre genre) {
+        this.genres.add(genre);
     }
 }
