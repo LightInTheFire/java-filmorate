@@ -29,22 +29,24 @@ public class JdbcFilmRepository implements FilmRepository {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("id", id);
 
-        List<Film> films = jdbc.query("""
-                        SELECT f.film_id,
-                               f.name,
-                               f.description,
-                               f.release_date,
-                               f.duration_in_minutes,
-                               f.mpa_id,
-                               mr.name AS mpa_name,
-                               g.genre_id,
-                               g.name AS genre_name
-                        FROM films f
-                        JOIN mpa_ratings mr ON f.mpa_id = mr.mpa_id
-                        LEFT JOIN film_genres fg ON f.film_id = fg.film_id
-                        LEFT JOIN genres g ON g.genre_id = fg.genre_id
-                        WHERE f.film_id = :id""",
-                params, filmResultSetExtractor);
+        String selectFilmByIdSql = """
+                SELECT f.film_id,
+                       f.name,
+                       f.description,
+                       f.release_date,
+                       f.duration_in_minutes,
+                       f.mpa_id,
+                       mr.name AS mpa_name,
+                       g.genre_id,
+                       g.name AS genre_name
+                FROM films f
+                JOIN mpa_ratings mr ON f.mpa_id = mr.mpa_id
+                LEFT JOIN film_genres fg ON f.film_id = fg.film_id
+                LEFT JOIN genres g ON g.genre_id = fg.genre_id
+                WHERE f.film_id = :id""";
+
+        List<Film> films = jdbc.query(selectFilmByIdSql, params, filmResultSetExtractor);
+
         return films.isEmpty() ? Optional.empty() : Optional.of(films.getFirst());
     }
 
@@ -94,10 +96,10 @@ public class JdbcFilmRepository implements FilmRepository {
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
         MapSqlParameterSource params = prepareParamMap(film);
 
-        jdbc.update("""
-                        INSERT INTO films(name, description, release_date, duration_in_minutes, mpa_id)
-                        VALUES (:name, :description, :release_date, :duration, :mpa_id)""",
-                params, keyHolder, new String[]{"film_id"});
+        String saveFilmSql = """
+                INSERT INTO films(name, description, release_date, duration_in_minutes, mpa_id)
+                VALUES (:name, :description, :release_date, :duration, :mpa_id)""";
+        jdbc.update(saveFilmSql, params, keyHolder, new String[]{"film_id"});
 
         film.setId(keyHolder.getKeyAs(Long.class));
 
@@ -129,7 +131,8 @@ public class JdbcFilmRepository implements FilmRepository {
     public void deleteById(long id) {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("id", id);
-        jdbc.update("DELETE FROM films WHERE film_id = :id", params);
+        String deleteFilmByIdSql = "DELETE FROM films WHERE film_id = :id";
+        jdbc.update(deleteFilmByIdSql, params);
     }
 
     @Override
@@ -175,10 +178,10 @@ public class JdbcFilmRepository implements FilmRepository {
 
     private MapSqlParameterSource prepareParamMap(Film film) {
         return new MapSqlParameterSource()
-        .addValue("name", film.getName())
-        .addValue("description", film.getDescription())
-        .addValue("release_date", film.getReleaseDate())
-        .addValue("duration", film.getDuration())
-        .addValue("mpa_id", film.getMpaRating().getId());
+                .addValue("name", film.getName())
+                .addValue("description", film.getDescription())
+                .addValue("release_date", film.getReleaseDate())
+                .addValue("duration", film.getDuration())
+                .addValue("mpa_id", film.getMpaRating().getId());
     }
 }

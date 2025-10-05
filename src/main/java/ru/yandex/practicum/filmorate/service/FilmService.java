@@ -62,6 +62,7 @@ public class FilmService {
         }
 
         film = filmRepository.save(film);
+        log.info("Film with id {} has been created", film.getId());
         return FilmMapper.toFilmDto(film);
     }
 
@@ -86,25 +87,28 @@ public class FilmService {
         }
 
         film = FilmMapper.updateFilmFields(film, request);
-
+        log.info("Film with id {} has been updated", film.getId());
         filmRepository.update(film);
         return FilmMapper.toFilmDto(film);
     }
 
     public void deleteById(long id) {
         filmRepository.deleteById(id);
+        log.info("Film with id {} has been deleted", id);
     }
 
     public void addLike(long filmId, long userId) {
         throwIfFilmNotFound(filmId);
         throwIfUserNotFound(userId);
         likesRepository.addLike(userId, filmId);
+        log.info("Like to film with id {} has been added by user {}", filmId, userId);
     }
 
     public void removeLike(long filmId, long userId) {
         throwIfFilmNotFound(filmId);
         throwIfUserNotFound(userId);
         likesRepository.removeLike(userId, filmId);
+        log.info("Like to film with id {} has been removed by user {}", filmId, userId);
     }
 
     public Collection<FilmDto> findFilmsWithTopLikes(int count) {

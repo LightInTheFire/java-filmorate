@@ -13,22 +13,26 @@ public class JdbcLikesRepository implements LikesRepository {
     @Override
     public void addLike(long userId, long filmId) {
         MapSqlParameterSource params = getParameterMap(userId, filmId);
-        jdbc.update("""
+        String addLikeToFilmSql = """
                 INSERT INTO likes (user_id, film_id)
-                VALUES (:user_id, :film_id)""", params);
+                VALUES (:user_id, :film_id)""";
+
+        jdbc.update(addLikeToFilmSql, params);
     }
 
     @Override
     public void removeLike(long userId, long filmId) {
         MapSqlParameterSource params = getParameterMap(userId, filmId);
-        jdbc.update("""
+        String deleteLikeFromFilmSql = """
                 DELETE FROM likes
-                WHERE user_id = :user_id AND film_id = :film_id""", params);
+                WHERE user_id = :user_id AND film_id = :film_id""";
+
+        jdbc.update(deleteLikeFromFilmSql, params);
     }
 
     private MapSqlParameterSource getParameterMap(long userId, long filmId) {
         return new MapSqlParameterSource()
-        .addValue("user_id", userId)
-        .addValue("film_id", filmId);
+                .addValue("user_id", userId)
+                .addValue("film_id", filmId);
     }
 }

@@ -40,6 +40,7 @@ public class UserService {
         }
         User user = UserMapper.mapToUser(request);
         user = userRepository.save(user);
+        log.info("User with id {} created", user.getId());
         return UserMapper.toUserDto(user);
     }
 
@@ -49,11 +50,13 @@ public class UserService {
         );
         user = UserMapper.updateUserFields(user, request);
         userRepository.update(user);
+        log.info("User with id {} updated", user.getId());
         return UserMapper.toUserDto(user);
     }
 
     public void deleteById(long id) {
         userRepository.deleteById(id);
+        log.info("User with id {} deleted", id);
     }
 
     public void addFriend(long userId, long friendId) {
@@ -61,12 +64,14 @@ public class UserService {
         throwIfUserNotFound(friendId);
 
         friendshipsRepository.addFriendship(userId, friendId);
+        log.info("User with id {} added user with id {} as friend", userId, friendId);
     }
 
     public void removeFriend(long userId, long friendId) {
         throwIfUserNotFound(userId);
         throwIfUserNotFound(friendId);
         friendshipsRepository.removeFriendship(userId, friendId);
+        log.info("User with id {} removed user with id {} from friends", userId, friendId);
     }
 
     public Collection<UserDto> findFriends(long userId) {
