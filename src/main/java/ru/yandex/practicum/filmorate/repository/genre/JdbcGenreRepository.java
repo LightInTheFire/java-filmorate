@@ -21,21 +21,22 @@ public class JdbcGenreRepository implements GenreRepository {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("id", id);
 
-        List<Genre> genres = jdbc.query("SELECT * FROM genres WHERE genre_id = :id",
-                params,
-                rowMapper);
+        String selectGenreByIdSql = "SELECT * FROM genres WHERE genre_id = :id";
+        List<Genre> genres = jdbc.query(selectGenreByIdSql, params, rowMapper);
 
         return genres.isEmpty() ? Optional.empty() : Optional.of(genres.getFirst());
     }
 
     public Collection<Genre> findAll() {
-        return jdbc.query("SELECT * FROM genres ORDER BY genre_id", rowMapper);
+        String selectAllGenresSql = "SELECT * FROM genres ORDER BY genre_id";
+        return jdbc.query(selectAllGenresSql, rowMapper);
     }
 
     @Override
     public List<Genre> getByIds(List<Long> genreIds) {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("list", genreIds);
-        return jdbc.query("SELECT * FROM genres WHERE genre_id IN (:list)", params, rowMapper);
+        String selectAllGenresByIdsSql = "SELECT * FROM genres WHERE genre_id IN (:list)";
+        return jdbc.query(selectAllGenresByIdsSql , params, rowMapper);
     }
 }

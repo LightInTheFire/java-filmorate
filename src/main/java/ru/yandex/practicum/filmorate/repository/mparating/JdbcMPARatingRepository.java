@@ -22,15 +22,16 @@ public class JdbcMPARatingRepository implements MPARatingRepository {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("id", id);
 
-        List<MPARating> mpaRatings = jdbc.query("SELECT * FROM mpa_ratings WHERE mpa_id = :id",
-                params,
-                rowMapper);
+        String selectMpaByIdSql = "SELECT * FROM mpa_ratings WHERE mpa_id = :id";
+
+        List<MPARating> mpaRatings = jdbc.query(selectMpaByIdSql, params, rowMapper);
 
         return mpaRatings.isEmpty() ? Optional.empty() : Optional.of(mpaRatings.getFirst());
     }
 
     @Override
     public Collection<MPARating> findAll() {
-        return jdbc.query("SELECT * FROM mpa_ratings ORDER BY mpa_id", rowMapper);
+        String selectAllMpaSql = "SELECT * FROM mpa_ratings ORDER BY mpa_id";
+        return jdbc.query(selectAllMpaSql, rowMapper);
     }
 }

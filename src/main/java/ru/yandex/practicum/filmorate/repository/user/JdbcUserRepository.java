@@ -23,16 +23,16 @@ public class JdbcUserRepository implements UserRepository {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("id", id);
 
-        List<User> users = jdbc.query("SELECT * FROM users WHERE user_id = :id",
-                params,
-                rowMapper);
+        String selectUserByIdSql = "SELECT * FROM users WHERE user_id = :id";
+        List<User> users = jdbc.query(selectUserByIdSql, params, rowMapper);
 
         return users.isEmpty() ? Optional.empty() : Optional.of(users.getFirst());
     }
 
     @Override
     public Collection<User> findAll() {
-        return jdbc.query("SELECT * FROM users ORDER BY user_id", rowMapper);
+        String selectAllUsersSql = "SELECT * FROM users ORDER BY user_id";
+        return jdbc.query(selectAllUsersSql, rowMapper);
     }
 
     @Override
@@ -44,10 +44,11 @@ public class JdbcUserRepository implements UserRepository {
                 .addValue("name", user.getName())
                 .addValue("birthday", user.getBirthday());
 
-        jdbc.update("""
-                        INSERT INTO users (email, login, name, birthday)
-                        VALUES (:email, :login, :name, :birthday)""",
-                params, keyHolder, new String[]{"user_id"});
+        String saveUserSql = """
+                INSERT INTO users (email, login, name, birthday)
+                VALUES (:email, :login, :name, :birthday)""";
+
+        jdbc.update(saveUserSql, params, keyHolder, new String[]{"user_id"});
 
         user.setId(keyHolder.getKeyAs(Long.class));
         return user;
@@ -61,17 +62,21 @@ public class JdbcUserRepository implements UserRepository {
                 .addValue("name", user.getName())
                 .addValue("birthday", user.getBirthday())
                 .addValue("id", user.getId());
-        jdbc.update("""
+
+        String updateUserSql = """
                 UPDATE users
                 SET email = :email, login = :login, name = :name, birthday = :birthday
-                WHERE user_id = :id""", params);
+                WHERE user_id = :id""";
+
+        jdbc.update(updateUserSql, params);
     }
 
     @Override
     public void deleteById(long id) {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("id", id);
-        jdbc.update("DELETE FROM users WHERE user_id = :id", params);
+        String deleteUserByIdSql = "DELETE FROM users WHERE user_id = :id";
+        jdbc.update(deleteUserByIdSql, params);
     }
 
     @Override
@@ -79,31 +84,33 @@ public class JdbcUserRepository implements UserRepository {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("user_id", userId);
 
-        return jdbc.query("""
-                        SELECT *
-                        FROM users u
-                        WHERE u.user_id IN (SELECT f.user_id2
-                                            FROM friendships f
-                                            WHERE f.user_id1 = :user_id)""",
-                params, rowMapper);
+        String selectFriendsOfUserSql = """
+                SELECT *
+                FROM users u
+                WHERE u.user_id IN (SELECT f.user_id2
+                                    FROM friendships f
+                                    WHERE f.user_id1 = :user_id)""";
+
+        return jdbc.query(selectFriendsOfUserSql, params, rowMapper);
     }
 
     @Override
     public Collection<User> findAllCommonFriends(long userId1, long userId2) {
         MapSqlParameterSource params = new MapSqlParameterSource()
-        .addValue("user_id1", userId1)
-        .addValue("user_id2", userId2);
+                .addValue("user_id1", userId1)
+                .addValue("user_id2", userId2);
 
-        return jdbc.query("""
-                        SELECT *
-                        FROM users u
-                        WHERE u.user_id IN (SELECT user_id2
-                                            FROM friendships
-                                            WHERE user_id1 = :user_id1
-                                            INTERSECT
-                                            SELECT user_id2
-                                            FROM friendships
-                                            WHERE user_id1 = :user_id2)""",
-                params, rowMapper);
+        String selectCommonFriendsSql = """
+                SELECT *
+                FROM users u
+                WHERE u.user_id IN (SELECT user_id2
+                                    FROM friendships
+                                    WHERE user_id1 = :user_id1
+                                    INTERSECT
+                                    SELECT user_id2
+                                    FROM friendships
+                                    WHERE user_id1 = :user_id2)""";
+
+        return jdbc.query(selectCommonFriendsSql, params, rowMapper);
     }
 }

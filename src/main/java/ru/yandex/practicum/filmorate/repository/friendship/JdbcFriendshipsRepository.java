@@ -13,17 +13,19 @@ public class JdbcFriendshipsRepository implements FriendshipsRepository {
     @Override
     public void addFriendship(long userId, long friendId) {
         MapSqlParameterSource params = getParameterMap(userId, friendId);
-        jdbc.update("""
+        String addFriendshipSql = """
                 INSERT INTO friendships (user_id1, user_id2)
-                VALUES (:user_id1, :user_id2)""", params);
+                VALUES (:user_id1, :user_id2)""";
+        jdbc.update(addFriendshipSql, params);
     }
 
     @Override
     public void removeFriendship(long userId, long friendId) {
         MapSqlParameterSource params = getParameterMap(userId, friendId);
-        jdbc.update("""
+        String deleteFriendshipSql = """
                 DELETE FROM friendships
-                WHERE user_id1 = :user_id1 AND user_id2 = :user_id2""", params);
+                WHERE user_id1 = :user_id1 AND user_id2 = :user_id2""";
+        jdbc.update(deleteFriendshipSql, params);
     }
 
     private MapSqlParameterSource getParameterMap(long userId, long friendId) {
