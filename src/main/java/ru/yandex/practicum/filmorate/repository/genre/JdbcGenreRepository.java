@@ -37,6 +37,6 @@ public class JdbcGenreRepository implements GenreRepository {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("list", genreIds);
         String selectAllGenresByIdsSql = "SELECT * FROM genres WHERE genre_id IN (:list)";
-        return jdbc.query(selectAllGenresByIdsSql , params, rowMapper);
+        return jdbc.query(selectAllGenresByIdsSql, params, rowMapper);
     }
 }
