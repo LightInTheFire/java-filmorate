@@ -1,98 +1,27 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dto.user.NewUserRequest;
 import ru.yandex.practicum.filmorate.dto.user.UpdateUserRequest;
 import ru.yandex.practicum.filmorate.dto.user.UserDto;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.mapper.UserMapper;
-import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.repository.friendship.FriendshipsRepository;
-import ru.yandex.practicum.filmorate.repository.user.UserRepository;
 
 import java.util.Collection;
 
-@Service
-@Slf4j
-@RequiredArgsConstructor
-public class UserService {
-    private final UserRepository userRepository;
-    private final FriendshipsRepository friendshipsRepository;
+public interface UserService {
+    Collection<UserDto> findAll();
 
-    public Collection<UserDto> findAll() {
-        return userRepository.findAll()
-                .stream()
-                .map(UserMapper::toUserDto)
-                .toList();
-    }
+    UserDto findById(Long id);
 
-    public UserDto findById(Long id) {
-        return userRepository.findById(id)
-                .map(UserMapper::toUserDto)
-                .orElseThrow(NotFoundException.supplier("User with id %d not found", id));
-    }
+    UserDto create(NewUserRequest request);
 
-    public UserDto create(NewUserRequest request) {
-        if (request.getName() == null) {
-            request.setName(request.getLogin());
-        }
-        User user = UserMapper.mapToUser(request);
-        user = userRepository.save(user);
-        log.info("User with id {} created", user.getId());
-        return UserMapper.toUserDto(user);
-    }
+    UserDto update(UpdateUserRequest request);
 
-    public UserDto update(UpdateUserRequest request) {
-        User user = userRepository.findById(request.getId()).orElseThrow(
-                NotFoundException.supplier("User with id %d not found", request.getId())
-        );
-        user = UserMapper.updateUserFields(user, request);
-        userRepository.update(user);
-        log.info("User with id {} updated", user.getId());
-        return UserMapper.toUserDto(user);
-    }
+    void deleteById(long id);
 
-    public void deleteById(long id) {
-        userRepository.deleteById(id);
-        log.info("User with id {} deleted", id);
-    }
+    void addFriend(long userId, long friendId);
 
-    public void addFriend(long userId, long friendId) {
-        throwIfUserNotFound(userId);
-        throwIfUserNotFound(friendId);
+    void removeFriend(long userId, long friendId);
 
-        friendshipsRepository.addFriendship(userId, friendId);
-        log.info("User with id {} added user with id {} as friend", userId, friendId);
-    }
+    Collection<UserDto> findFriends(long userId);
 
-    public void removeFriend(long userId, long friendId) {
-        throwIfUserNotFound(userId);
-        throwIfUserNotFound(friendId);
-        friendshipsRepository.removeFriendship(userId, friendId);
-        log.info("User with id {} removed user with id {} from friends", userId, friendId);
-    }
-
-    public Collection<UserDto> findFriends(long userId) {
-        throwIfUserNotFound(userId);
-        return userRepository.findAllFriends(userId)
-                .stream()
-                .map(UserMapper::toUserDto)
-                .toList();
-    }
-
-    public Collection<UserDto> findAllCommonFriends(long userId1, long userId2) {
-        throwIfUserNotFound(userId1);
-        throwIfUserNotFound(userId2);
-        return userRepository.findAllCommonFriends(userId1, userId2)
-                .stream()
-                .map(UserMapper::toUserDto)
-                .toList();
-    }
-
-    private void throwIfUserNotFound(long userId) {
-        userRepository.findById(userId)
-                .orElseThrow(NotFoundException.supplier("User with id %d not found", userId));
-    }
+    Collection<UserDto> findAllCommonFriends(long userId1, long userId2);
 }
