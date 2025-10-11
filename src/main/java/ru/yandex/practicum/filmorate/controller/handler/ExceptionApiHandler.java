@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.handler;
+package ru.yandex.practicum.filmorate.controller.handler;
 
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
@@ -54,7 +54,7 @@ public class ExceptionApiHandler {
         return new ValidationErrorResponse(violations);
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFound(NotFoundException ex) {
         log.warn("Not found exception occurred while processing request {}", ex.getMessage());
