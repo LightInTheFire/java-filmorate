@@ -161,6 +161,40 @@ public class JdbcFilmRepository implements FilmRepository {
         return jdbc.query(selectTopFilmsSql, params, filmResultSetExtractor);
     }
 
+    @Override
+    public Collection<Film> findCommonFilms(long userId, long friendId) {
+        String selectCommonFilmsSql = """
+                SELECT f.film_id,
+                       f.name,
+                       f.description,
+                       f.release_date,
+                       f.duration_in_minutes,
+                       f.mpa_id,
+                       mr.name AS mpa_name,
+                       g.genre_id,
+                       g.name AS genre_name
+                FROM films f
+                JOIN mpa_ratings mr ON f.mpa_id = mr.mpa_id
+                LEFT JOIN film_genres fg ON f.film_id = fg.film_id
+                LEFT JOIN genres g ON g.genre_id = fg.genre_id
+                LEFT JOIN likes fl ON f.film_id = fl.film_id
+                WHERE f.film_id in (SELECT l1.film_id
+                                    FROM likes l1
+                                    WHERE l1.user_id = :user_id
+                                    INTERSECT
+                                    SELECT l2.film_id
+                                    FROM likes l2
+                                    WHERE l2.user_id = :friend_id)
+                GROUP BY f.film_id, f.name, g.genre_id
+                ORDER BY COUNT(fl.user_id) DESC, f.film_id
+                """;
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("user_id", userId)
+                .addValue("friend_id", friendId);
+
+        return jdbc.query(selectCommonFilmsSql, params, filmResultSetExtractor);
+    }
+
     private void saveGenres(Set<Genre> genres, long filmId) {
         String insertGenresSql = """
                 INSERT INTO film_genres (film_id, genre_id)

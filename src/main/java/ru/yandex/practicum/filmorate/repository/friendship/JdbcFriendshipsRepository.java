@@ -28,9 +28,23 @@ public class JdbcFriendshipsRepository implements FriendshipsRepository {
         jdbc.update(deleteFriendshipSql, params);
     }
 
+    @Override
+    public boolean isFriends(long userId, long friendId) {
+        String checkFriendshipSql = """
+                SELECT EXISTS (
+                    SELECT 1
+                    FROM friendships
+                    WHERE user_id1 = :user_id AND user_id2 = :friend_id)""";
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("user_id", userId)
+                .addValue("friend_id", friendId);
+
+        return Boolean.TRUE.equals(jdbc.queryForObject(checkFriendshipSql, params, Boolean.class));
+    }
+
     private MapSqlParameterSource getParameterMap(long userId, long friendId) {
         return new MapSqlParameterSource()
-        .addValue("user_id1", userId)
-        .addValue("user_id2", friendId);
+                .addValue("user_id1", userId)
+                .addValue("user_id2", friendId);
     }
 }
