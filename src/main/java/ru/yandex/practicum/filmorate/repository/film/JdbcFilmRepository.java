@@ -15,7 +15,6 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-
 @Repository
 @RequiredArgsConstructor
 public class JdbcFilmRepository implements FilmRepository {
@@ -132,6 +131,7 @@ public class JdbcFilmRepository implements FilmRepository {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("id", id);
         String deleteFilmByIdSql = "DELETE FROM films WHERE film_id = :id";
+
         jdbc.update(deleteFilmByIdSql, params);
     }
 
