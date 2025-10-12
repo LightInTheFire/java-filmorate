@@ -69,6 +69,13 @@ public class FilmController {
         filmService.removeLike(id, userId);
     }
 
+    @GetMapping("/common")
+    public Collection<FilmDto> findCommonFilms(@RequestParam(name = "userId") @Positive long userId,
+                                               @RequestParam(name = "friendId") @Positive long friendId) {
+            log.trace("Find common films requested for user {} and friend {}", userId, friendId);
+           return filmService.findCommonFilms(userId, friendId);
+    }
+
     @GetMapping("/popular")
     public Collection<FilmDto> findPopular(@RequestParam(defaultValue = "10") @Positive int count) {
         log.trace("Find popular film requested with count: {}", count);

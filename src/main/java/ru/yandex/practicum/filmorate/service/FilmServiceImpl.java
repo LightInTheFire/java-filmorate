@@ -126,6 +126,17 @@ public class FilmServiceImpl implements FilmService {
                 .toList();
     }
 
+    @Override
+    public Collection<FilmDto> findCommonFilms(long userId, long friendId) {
+        throwIfUserNotFound(userId);
+        throwIfUserNotFound(friendId);
+
+        return filmRepository.findCommonFilms(userId, friendId)
+                .stream()
+                .map(FilmMapper::toFilmDto)
+                .toList();
+    }
+
     private void throwIfUserNotFound(long userId) {
         userRepository.findById(userId)
                 .orElseThrow(NotFoundException.supplier("User with id %d not found", userId));

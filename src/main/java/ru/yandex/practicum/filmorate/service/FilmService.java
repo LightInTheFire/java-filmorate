@@ -22,4 +22,6 @@ public interface FilmService {
     void removeLike(long filmId, long userId);
 
     Collection<FilmDto> findFilmsWithTopLikes(int count);
+
+    Collection<FilmDto> findCommonFilms(long userId, long friendId);
 }
