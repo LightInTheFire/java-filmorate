@@ -155,6 +155,14 @@ public class FilmServiceImpl implements FilmService {
                 .orElseThrow(NotFoundException.supplier("Director with id %d not found", directorId));
     }
 
+    @Override
+    public Collection<FilmDto> searchFilms(String query, String by) {
+        return filmRepository.searchFilms(query, by)
+                .stream()
+                .map(FilmMapper::toFilmDto)
+                .toList();
+    }
+
     private void throwIfUserNotFound(long userId) {
         userRepository.findById(userId)
                 .orElseThrow(NotFoundException.supplier("User with id %d not found", userId));

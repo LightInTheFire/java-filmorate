@@ -19,6 +19,7 @@ public class FilmDto {
     Long id;
     String name;
     String description;
+    String director;
     LocalDate releaseDate;
     Integer duration;
     MPARatingDto mpa;

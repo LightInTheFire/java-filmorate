@@ -34,6 +34,13 @@ public class FilmController {
         return filmService.findById(filmId);
     }
 
+    @GetMapping("/search")
+    public Collection<FilmDto> searchFilms(@RequestParam String query,
+                                           @RequestParam(defaultValue = "title") String by) {
+        log.trace("Search films requested with query: {}, by: {}", query, by);
+        return filmService.searchFilms(query, by);
+    }
+
     @DeleteMapping("/{filmId}")
     public void deleteById(@PathVariable @Positive long filmId) {
         log.trace("Delete film by id requested, id: {}", filmId);

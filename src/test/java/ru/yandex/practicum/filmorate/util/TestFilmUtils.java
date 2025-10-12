@@ -21,6 +21,7 @@ public class TestFilmUtils {
                 .releaseDate(LocalDate.of(2020, 1, 1))
                 .duration(120)
                 .mpaRating(filmRating)
+                .director("Director 1")
                 .build();
     }
 
@@ -33,6 +34,7 @@ public class TestFilmUtils {
                 .releaseDate(LocalDate.of(2020, 1, 1))
                 .duration(120)
                 .mpaRating(filmRating)
+                .director("Director 2")
                 .build();
         return Arrays.asList(testFilm1, testFilm2);
     }

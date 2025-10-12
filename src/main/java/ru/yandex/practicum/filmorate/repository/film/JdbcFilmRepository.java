@@ -168,6 +168,54 @@ public class JdbcFilmRepository implements FilmRepository {
         return jdbc.query(selectFilmsOfDirectorSortedSql, params, filmRowMapper);
     }
 
+    @Override
+    public Collection<Film> searchFilms(String query, String by) {
+        String searchPattern = "%" + query.toLowerCase() + "%";
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("query", searchPattern);
+
+        String searchSql = buildSearchSql(by);
+        return jdbc.query(searchSql, params, filmResultSetExtractor);
+    }
+
+    private String buildSearchSql(String by) {
+        String[] searchFields = by.split(",");
+        List<String> conditions = new ArrayList<>();
+
+        for (String field : searchFields) {
+            switch (field.trim()) {
+                case "title":
+                    conditions.add("LOWER(f.name) LIKE :query");
+                    break;
+                case "director":
+                    conditions.add("LOWER(f.director) LIKE :query");
+                    break;
+            }
+        }
+        if (conditions.isEmpty()) {
+            conditions.add("LOWER(f.name) LIKE :query");
+        }
+        String whereClause = String.join(" OR ", conditions);
+
+        return """
+                SELECT f.film_id,
+                       f.name,
+                       f.description,
+                       f.release_date,
+                       f.duration_in_minutes,
+                       f.mpa_id,
+                       mr.name AS mpa_name,
+                       g.genre_id,
+                       g.name AS genre_name,
+                       f.director
+                FROM films f
+                JOIN mpa_ratings mr ON f.mpa_id = mr.mpa_id
+                LEFT JOIN film_genres fg ON f.film_id = fg.film_id
+                LEFT JOIN genres g ON g.genre_id = fg.genre_id
+                WHERE """ + whereClause + """
+                ORDER BY (SELECT COUNT(*) FROM likes l WHERE l.film_id = f.film_id) DESC, f.film_id""";
+    }
+
     private void saveGenres(Set<Genre> genres, long filmId) {
         String insertGenresSql = """
                 INSERT INTO film_genres (film_id, genre_id)

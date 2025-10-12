@@ -16,6 +16,7 @@ public class Film {
     Long id;
     String name;
     String description;
+    String director;
     LocalDate releaseDate;
     Integer duration;
     MPARating mpaRating;

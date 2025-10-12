@@ -78,6 +78,7 @@ public class JdbcFilmRepositoryTest {
                 .releaseDate(LocalDate.of(2020, 1, 1))
                 .duration(60)
                 .mpaRating(MPARating.builder().id(2L).name("PG").build())
+                .director("newDirector")
                 .build();
 
         Film savedFilm = filmRepository.save(film);

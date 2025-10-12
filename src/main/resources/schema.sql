@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS films
     release_date        date         NOT NULL CHECK (release_date >= '1895-12-28'),
     duration_in_minutes BIGINT      NOT NULL CHECK (duration_in_minutes > 0),
     mpa_id              BIGINT      NOT NULL,
+    director            varchar(255),
     FOREIGN KEY (mpa_id) REFERENCES mpa_ratings (mpa_id)
 );
 
