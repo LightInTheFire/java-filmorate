@@ -13,7 +13,7 @@ public interface DirectorService {
 
     DirectorDto create(NewDirectorRequest request);
 
-    DirectorDto update(UpdateDirectorRequest director);
+    DirectorDto update(UpdateDirectorRequest request);
 
     void deleteById(long id);
 }
