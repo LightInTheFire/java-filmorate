@@ -17,4 +17,6 @@ public interface FilmRepository {
     void deleteById(long id);
 
     Collection<Film> findTopPopularFilms(int count);
+
+    Collection<Film> findCommonFilms(long userId, long friendId);
 }
