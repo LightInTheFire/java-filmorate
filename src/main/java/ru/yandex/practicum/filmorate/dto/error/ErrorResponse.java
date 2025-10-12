@@ -1,4 +1,4 @@
 package ru.yandex.practicum.filmorate.dto.error;
 
-public record ErrorResponse(String errorName, String description) {
+public record ErrorResponse(String error, String description) {
 }
