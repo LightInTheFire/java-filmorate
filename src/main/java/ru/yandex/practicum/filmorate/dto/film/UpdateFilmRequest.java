@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
+import ru.yandex.practicum.filmorate.dto.director.DirectorDto;
 import ru.yandex.practicum.filmorate.dto.genre.GenreDto;
 import ru.yandex.practicum.filmorate.dto.mparating.MPARatingDto;
 import ru.yandex.practicum.filmorate.validation.AfterDate;
@@ -27,6 +28,7 @@ public class UpdateFilmRequest {
     Integer duration;
     MPARatingDto mpa;
     List<GenreDto> genres;
+    List<DirectorDto> directors;
 
     public boolean hasName() {
         return name != null && !name.isEmpty();
@@ -50,5 +52,9 @@ public class UpdateFilmRequest {
 
     public boolean hasMpa() {
         return mpa != null && mpa.id() != null;
+    }
+
+    public boolean hasDirectors() {
+        return directors != null && !directors.isEmpty();
     }
 }

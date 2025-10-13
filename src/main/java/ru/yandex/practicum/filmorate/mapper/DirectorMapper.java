@@ -19,6 +19,13 @@ public class DirectorMapper {
                 .build();
     }
 
+    public Director toDirector(DirectorDto directorDto) {
+        return Director.builder()
+                .name(directorDto.name())
+                .id(directorDto.id())
+                .build();
+    }
+
     public Director updateDirectorFields(Director director, UpdateDirectorRequest request) {
         if (request.hasName()) {
             director.setName(request.getName());
