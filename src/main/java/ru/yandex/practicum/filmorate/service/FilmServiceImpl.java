@@ -11,8 +11,11 @@ import ru.yandex.practicum.filmorate.dto.film.UpdateFilmRequest;
 import ru.yandex.practicum.filmorate.dto.genre.GenreDto;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.mapper.FilmMapper;
+import ru.yandex.practicum.filmorate.model.Event;
+import ru.yandex.practicum.filmorate.model.EventType;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Operation;
 import ru.yandex.practicum.filmorate.repository.film.FilmRepository;
 import ru.yandex.practicum.filmorate.repository.genre.GenreRepository;
 import ru.yandex.practicum.filmorate.repository.like.LikesRepository;
@@ -32,6 +35,7 @@ public class FilmServiceImpl implements FilmService {
     LikesRepository likesRepository;
     GenreRepository genreRepository;
     MPARatingRepository mpaRepository;
+    EventService eventService;
 
     @Override
     public Collection<FilmDto> findAll() {
@@ -107,6 +111,16 @@ public class FilmServiceImpl implements FilmService {
         throwIfFilmNotFound(filmId);
         throwIfUserNotFound(userId);
         likesRepository.addLike(userId, filmId);
+
+        // Добавляем событие лайка
+        eventService.addEvent(Event.builder()
+                .userId(userId)
+                .eventType(EventType.LIKE)
+                .operation(Operation.ADD)
+                .entityId(filmId)
+                .timestamp(System.currentTimeMillis())
+                .build());
+
         log.info("Like to film with id {} has been added by user {}", filmId, userId);
     }
 
@@ -115,6 +129,16 @@ public class FilmServiceImpl implements FilmService {
         throwIfFilmNotFound(filmId);
         throwIfUserNotFound(userId);
         likesRepository.removeLike(userId, filmId);
+
+        // Добавляем событие удаления лайка
+        eventService.addEvent(Event.builder()
+                .userId(userId)
+                .eventType(EventType.LIKE)
+                .operation(Operation.REMOVE)
+                .entityId(filmId)
+                .timestamp(System.currentTimeMillis())
+                .build());
+
         log.info("Like to film with id {} has been removed by user {}", filmId, userId);
     }
 

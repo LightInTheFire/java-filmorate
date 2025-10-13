@@ -7,13 +7,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.dto.event.EventDto;
 import ru.yandex.practicum.filmorate.dto.user.NewUserRequest;
 import ru.yandex.practicum.filmorate.dto.user.UpdateUserRequest;
 import ru.yandex.practicum.filmorate.dto.user.UserDto;
+import ru.yandex.practicum.filmorate.service.EventService;
 import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.dto.event.EventDto;
+import ru.yandex.practicum.filmorate.service.EventService;
 
 import java.util.Collection;
-
 
 @RestController
 @RequestMapping("/users")
@@ -22,6 +25,7 @@ import java.util.Collection;
 @Validated
 public class UserController {
     private final UserService userService;
+    private final EventService eventService;
 
     @GetMapping
     public Collection<UserDto> findAll() {
@@ -81,5 +85,11 @@ public class UserController {
                                                  @PathVariable @Positive long otherId) {
         log.trace("Find common friends requested for id {}, other id: {}", id, otherId);
         return userService.findAllCommonFriends(id, otherId);
+    }
+
+    @GetMapping("/{id}/feed")
+    public Collection<EventDto> getFeed(@PathVariable @Positive long id) {
+        log.trace("Get feed for user with id {} requested", id);
+        return eventService.getUserFeed(id);
     }
 }

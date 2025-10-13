@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.dto.user.UserDto;
 import java.util.Collection;
 
 public interface UserService {
+
     Collection<UserDto> findAll();
 
     UserDto findById(Long id);
