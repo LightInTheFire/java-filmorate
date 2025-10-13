@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.controller.FilmsSortBy;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
@@ -135,7 +136,7 @@ public class JdbcFilmRepository implements FilmRepository {
                                     SELECT l2.film_id
                                     FROM likes l2
                                     WHERE l2.user_id = :friend_id)
-                GROUP BY f.film_id, f.name, g.genre_id
+                GROUP BY f.film_id, g.genre_id
                 ORDER BY COUNT(fl.user_id) DESC, f.film_id
                 """);
         MapSqlParameterSource params = new MapSqlParameterSource()
@@ -143,6 +144,24 @@ public class JdbcFilmRepository implements FilmRepository {
                 .addValue("friend_id", friendId);
 
         return jdbc.query(selectCommonFilmsSql, params, filmRowMapper);
+    }
+
+    @Override
+    public Collection<Film> findFilmsOfDirector(long directorId, FilmsSortBy sortFilmsBy) {
+        String sortBySql = switch (sortFilmsBy) {
+            case YEAR -> "EXTRACT(YEAR from f.release_date)";
+            case LIKES -> "COUNT(fl.user_id) DESC";
+        };
+
+        String selectFilmsOfDirectorSortedSql = BASE_SELECT_SQL.concat("""
+                LEFT JOIN likes fl ON f.film_id = fl.film_id
+                WHERE d.director_id = :director_id
+                GROUP BY f.film_id, g.genre_id, f.release_date
+                ORDER BY %s""".formatted(sortBySql)
+        );
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("director_id", directorId);
+        return jdbc.query(selectFilmsOfDirectorSortedSql, params, filmRowMapper);
     }
 
     private void saveGenres(Set<Genre> genres, long filmId) {
