@@ -15,31 +15,31 @@ Reviews, top popular films by year and genre - [Nikolay Aleksandrov](https://git
 # Tables description
 This section provides a detailed description of each table in the database schema.
 
-* Events
+* Events  
 This table logs user activities such as likes, reviews, and friendships, serving as an audit or history trail for operations.
-* Friendships
+* Friendships  
 This table stores user-to-user friendship relationships.
-* Users
+* Users  
 This table holds user profile information for personalization.
-* Likes
+* Likes  
 This table records users' likes on films, for recommendation systems or popularity tracking.
-* Film Reviews
+* Film Reviews  
 This table links users and films to their reviews, acting as a junction for many-to-many relationships.
-* Reviews
+* Reviews  
 This table stores the content and metadata of user reviews.
-* Review Likes
+* Review Likes  
 This table tracks likes on reviews, similar to upvoting for helpfulness.
-* Films
+* Films  
 This core table contains movie details for the platform's catalog.
-* Film Directors
+* Film Directors  
 This junction table associates films with their directors.
-* Directors
+* Directors  
 This table lists film directors.
-* MPA Ratings
+* MPA Ratings  
 This table defines Motion Picture Association ratings (e.g., G, PG, R).
-* Film Genres
+* Film Genres  
 This junction table links films to genres.
-* Genres
+* Genres  
 This table categorizes film genres (e.g., Action, Drama).
 
 ## Examples of database queries
