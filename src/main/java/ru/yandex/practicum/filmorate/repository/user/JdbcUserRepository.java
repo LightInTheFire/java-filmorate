@@ -1,11 +1,13 @@
 package ru.yandex.practicum.filmorate.repository.user;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.Collection;
@@ -17,6 +19,7 @@ import java.util.Optional;
 public class JdbcUserRepository implements UserRepository {
     private final NamedParameterJdbcOperations jdbc;
     private final RowMapper<User> rowMapper;
+    private final ResultSetExtractor<List<Film>> filmResultSetExtractor;
 
     @Override
     public Optional<User> findById(long id) {
@@ -113,5 +116,30 @@ public class JdbcUserRepository implements UserRepository {
                                     WHERE user_id1 = :user_id2)""";
 
         return jdbc.query(selectCommonFriendsSql, params, rowMapper);
+    }
+
+    public Optional<Long> findSimilarFilmTasteUser(long userId) {
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("userId", userId);
+
+        String sql = """
+        SELECT l2.user_id AS other_user,
+               COUNT(*) AS common_like_count
+        FROM likes l1
+        JOIN likes l2 ON l1.film_id = l2.film_id
+        WHERE l1.user_id = :userId
+          AND l2.user_id != :userId
+        GROUP BY l2.user_id
+        ORDER BY common_like_count DESC
+        LIMIT 1""";
+
+        Long result = jdbc.query(sql, params, rs -> {
+            if (rs.next()) {
+                return rs.getObject("other_user", Long.class);
+            }
+            return null;
+        });
+
+        return Optional.ofNullable(result);
     }
 }

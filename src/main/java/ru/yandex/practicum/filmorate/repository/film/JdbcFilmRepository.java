@@ -11,6 +11,7 @@ import ru.yandex.practicum.filmorate.controller.FilmsSortBy;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.repository.user.UserRepository;
 
 import java.util.Collection;
 import java.util.List;
@@ -166,6 +167,45 @@ public class JdbcFilmRepository implements FilmRepository {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("director_id", directorId);
         return jdbc.query(selectFilmsOfDirectorSortedSql, params, filmRowMapper);
+    }
+
+    @Override
+    public Collection<Film> findFilmRecommendations(long userId) {
+
+        Optional<Long> similarUserOpt = userRepository.findSimilarFilmTasteUser(userId);
+
+        if (similarUserOpt.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        long similarUser = similarUserOpt.get();
+
+        String sqlRecommendations = """
+            SELECT f.film_id,
+                   f.name,
+                   f.description,
+                   f.release_date,
+                   f.duration_in_minutes,
+                   f.mpa_id,
+                   mr.name AS mpa_name,
+                   g.genre_id,
+                   g.name AS genre_name
+            FROM films f
+            JOIN mpa_ratings mr ON f.mpa_id = mr.mpa_id
+            LEFT JOIN film_genres fg ON f.film_id = fg.film_id
+            LEFT JOIN genres g ON g.genre_id = fg.genre_id
+            LEFT JOIN likes l ON f.film_id = l.film_id
+            WHERE l.user_id = :similarUser
+              AND f.film_id NOT IN (
+                  SELECT film_id FROM likes WHERE user_id = :userId
+              )
+        """;
+
+        MapSqlParameterSource params2 = new MapSqlParameterSource()
+                .addValue("similarUser", similarUser)
+                .addValue("userId", userId);
+
+        return jdbc.query(sqlRecommendations, params2, filmResultSetExtractor);
     }
 
     private void saveGenres(Set<Genre> genres, long filmId) {
