@@ -1,13 +1,11 @@
 package ru.yandex.practicum.filmorate.repository.user;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
-import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.Collection;
@@ -19,7 +17,6 @@ import java.util.Optional;
 public class JdbcUserRepository implements UserRepository {
     private final NamedParameterJdbcOperations jdbc;
     private final RowMapper<User> rowMapper;
-    private final ResultSetExtractor<List<Film>> filmResultSetExtractor;
 
     @Override
     public Optional<User> findById(long id) {
