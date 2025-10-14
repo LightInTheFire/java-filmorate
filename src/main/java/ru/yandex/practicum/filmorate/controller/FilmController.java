@@ -72,13 +72,26 @@ public class FilmController {
     @GetMapping("/common")
     public Collection<FilmDto> findCommonFilms(@RequestParam(name = "userId") @Positive long userId,
                                                @RequestParam(name = "friendId") @Positive long friendId) {
-            log.trace("Find common films requested for user {} and friend {}", userId, friendId);
-           return filmService.findCommonFilms(userId, friendId);
+        log.trace("Find common films requested for user {} and friend {}", userId, friendId);
+        return filmService.findCommonFilms(userId, friendId);
     }
 
     @GetMapping("/popular")
     public Collection<FilmDto> findPopular(@RequestParam(defaultValue = "10") @Positive int count) {
         log.trace("Find popular film requested with count: {}", count);
         return filmService.findFilmsWithTopLikes(count);
+    }
+
+    @GetMapping("/director/{directorId}")
+    public Collection<FilmDto> findFilmsOfDirector(@PathVariable @Positive long directorId,
+                                                   @RequestParam String sortBy) {
+
+        FilmsSortBy sortFilmsBy = FilmsSortBy.fromString(sortBy);
+        if (sortFilmsBy == null) {
+            throw new IllegalArgumentException("invalid sort by: %s".formatted(sortBy));
+        }
+
+        log.trace("Find films of director with id {} requested", directorId);
+        return filmService.findFilmsOfDirector(directorId, sortFilmsBy);
     }
 }

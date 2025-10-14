@@ -19,6 +19,12 @@ CREATE TABLE IF NOT EXISTS mpa_ratings
     name   varchar(20) NOT NULL UNIQUE
 );
 
+CREATE TABLE IF NOT EXISTS directors
+(
+    director_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name        varchar(120) NOT NULL UNIQUE
+);
+
 CREATE TABLE IF NOT EXISTS films
 (
     film_id             BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -28,6 +34,15 @@ CREATE TABLE IF NOT EXISTS films
     duration_in_minutes BIGINT      NOT NULL CHECK (duration_in_minutes > 0),
     mpa_id              BIGINT      NOT NULL,
     FOREIGN KEY (mpa_id) REFERENCES mpa_ratings (mpa_id)
+);
+
+CREATE TABLE IF NOT EXISTS film_directors
+(
+    film_id     BIGINT NOT NULL,
+    director_id BIGINT NOT NULL,
+    PRIMARY KEY (film_id, director_id),
+    FOREIGN KEY (film_id) REFERENCES films (film_id) ON DELETE CASCADE,
+    FOREIGN KEY (director_id) REFERENCES directors (director_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS film_genres

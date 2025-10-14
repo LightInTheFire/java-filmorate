@@ -7,10 +7,8 @@ import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.MPARating;
-import ru.yandex.practicum.filmorate.repository.film.FilmResultSetExtractor;
 import ru.yandex.practicum.filmorate.repository.film.FilmRowMapper;
 import ru.yandex.practicum.filmorate.repository.film.JdbcFilmRepository;
-import ru.yandex.practicum.filmorate.repository.genre.GenreRowMapper;
 import ru.yandex.practicum.filmorate.util.TestFilmUtils;
 
 import java.time.LocalDate;
@@ -20,7 +18,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @JdbcTest
-@Import({JdbcFilmRepository.class, FilmRowMapper.class, GenreRowMapper.class, FilmResultSetExtractor.class})
+@Import({JdbcFilmRepository.class, FilmRowMapper.class})
 public class JdbcFilmRepositoryTest {
     @Autowired
     private JdbcFilmRepository filmRepository;

@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.repository.film;
 
+import ru.yandex.practicum.filmorate.controller.FilmsSortBy;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.Collection;
@@ -19,4 +20,6 @@ public interface FilmRepository {
     Collection<Film> findTopPopularFilms(int count);
 
     Collection<Film> findCommonFilms(long userId, long friendId);
+
+    Collection<Film> findFilmsOfDirector(long directorId, FilmsSortBy sortFilmsBy);
 }

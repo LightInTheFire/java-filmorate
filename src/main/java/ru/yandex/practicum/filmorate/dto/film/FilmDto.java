@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Singular;
 import lombok.experimental.FieldDefaults;
+import ru.yandex.practicum.filmorate.dto.director.DirectorDto;
 import ru.yandex.practicum.filmorate.dto.genre.GenreDto;
 import ru.yandex.practicum.filmorate.dto.mparating.MPARatingDto;
 
@@ -23,4 +24,5 @@ public class FilmDto {
     MPARatingDto mpa;
     @Singular
     List<GenreDto> genres;
+    List<DirectorDto> directors;
 }

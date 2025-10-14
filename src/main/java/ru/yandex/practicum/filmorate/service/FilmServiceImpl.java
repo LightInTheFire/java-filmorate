@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.controller.FilmsSortBy;
 import ru.yandex.practicum.filmorate.dto.film.FilmDto;
 import ru.yandex.practicum.filmorate.dto.film.NewFilmRequest;
 import ru.yandex.practicum.filmorate.dto.film.UpdateFilmRequest;
@@ -13,6 +14,7 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.mapper.FilmMapper;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.repository.director.DirectorRepository;
 import ru.yandex.practicum.filmorate.repository.film.FilmRepository;
 import ru.yandex.practicum.filmorate.repository.genre.GenreRepository;
 import ru.yandex.practicum.filmorate.repository.like.LikesRepository;
@@ -32,6 +34,7 @@ public class FilmServiceImpl implements FilmService {
     LikesRepository likesRepository;
     GenreRepository genreRepository;
     MPARatingRepository mpaRepository;
+    DirectorRepository directorRepository;
 
     @Override
     public Collection<FilmDto> findAll() {
@@ -135,6 +138,21 @@ public class FilmServiceImpl implements FilmService {
                 .stream()
                 .map(FilmMapper::toFilmDto)
                 .toList();
+    }
+
+    @Override
+    public Collection<FilmDto> findFilmsOfDirector(long directorId, FilmsSortBy sortFilmsBy) {
+        throwIfDirectorNotFound(directorId);
+
+        return filmRepository.findFilmsOfDirector(directorId, sortFilmsBy)
+                .stream()
+                .map(FilmMapper::toFilmDto)
+                .toList();
+    }
+
+    private void throwIfDirectorNotFound(long directorId) {
+        directorRepository.findById(directorId)
+                .orElseThrow(NotFoundException.supplier("Director with id %d not found", directorId));
     }
 
     private void throwIfUserNotFound(long userId) {
