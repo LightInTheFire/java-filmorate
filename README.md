@@ -2,9 +2,45 @@
 
 Repository for filmorate - social network for film rating. Written in java.
 
+# Contributors
+Search - [Alexander-skipper](https://github.com/Alexander-skipper)<br>
+Feed - [n20va](https://github.com/n20va)<br>
+Recommendations - [Basementdoor](https://github.com/basementdoor)<br>
+Reviews, top popular films by year and genre - [Nikolay Aleksandrov](https://github.com/Alextrusk27)<br>
+
 # DB schema
 
 ![db schema](assets/readme/db_schema.svg)
+
+# Tables description
+This section provides a detailed description of each table in the database schema.
+
+* Events  
+This table logs user activities such as likes, reviews, and friendships, serving as an audit or history trail for operations.
+* Friendships  
+This table stores user-to-user friendship relationships.
+* Users  
+This table holds user profile information for personalization.
+* Likes  
+This table records users' likes on films, for recommendation systems or popularity tracking.
+* Film Reviews  
+This table links users and films to their reviews, acting as a junction for many-to-many relationships.
+* Reviews  
+This table stores the content and metadata of user reviews.
+* Review Likes  
+This table tracks likes on reviews, similar to upvoting for helpfulness.
+* Films  
+This core table contains movie details for the platform's catalog.
+* Film Directors  
+This junction table associates films with their directors.
+* Directors  
+This table lists film directors.
+* MPA Ratings  
+This table defines Motion Picture Association ratings (e.g., G, PG, R).
+* Film Genres  
+This junction table links films to genres.
+* Genres  
+This table categorizes film genres (e.g., Action, Drama).
 
 ## Examples of database queries
 
@@ -86,5 +122,5 @@ WHERE u.user_id IN (SELECT user_id2
 
                     SELECT user_id2
                     FROM friendships
-                    WHERE user_id1 = 2
+                    WHERE user_id1 = 2)
 ```
