@@ -76,6 +76,7 @@ public class JdbcUserRepository implements UserRepository {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("id", id);
         String deleteUserByIdSql = "DELETE FROM users WHERE user_id = :id";
+
         jdbc.update(deleteUserByIdSql, params);
     }
 
