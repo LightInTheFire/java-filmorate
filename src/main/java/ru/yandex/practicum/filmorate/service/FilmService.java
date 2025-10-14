@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import ru.yandex.practicum.filmorate.controller.FilmsSortBy;
 import ru.yandex.practicum.filmorate.dto.film.FilmDto;
 import ru.yandex.practicum.filmorate.dto.film.NewFilmRequest;
 import ru.yandex.practicum.filmorate.dto.film.UpdateFilmRequest;
@@ -24,4 +25,6 @@ public interface FilmService {
     Collection<FilmDto> findFilmsWithTopLikes(int count);
 
     Collection<FilmDto> findCommonFilms(long userId, long friendId);
+
+    Collection<FilmDto> findFilmsOfDirector(long directorId, FilmsSortBy sortFilmsBy);
 }

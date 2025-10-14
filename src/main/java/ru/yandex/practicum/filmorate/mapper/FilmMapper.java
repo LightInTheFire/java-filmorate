@@ -24,6 +24,10 @@ public class FilmMapper {
                         .stream()
                         .map(genre -> new GenreDto(genre.getId(), genre.getName()))
                         .toList())
+                .directors(film.getDirectors()
+                        .stream()
+                        .map(DirectorMapper::toDirectorDto)
+                        .toList())
                 .build();
     }
 
@@ -40,6 +44,10 @@ public class FilmMapper {
                                 .id(genreDto.id())
                                 .name(genreDto.name())
                                 .build())
+                        .collect(Collectors.toSet()))
+                .directors(request.getDirectors()
+                        .stream()
+                        .map(DirectorMapper::toDirector)
                         .collect(Collectors.toSet()))
                 .build();
     }
@@ -69,6 +77,12 @@ public class FilmMapper {
 
         if (request.hasMpa()) {
             film.setMpaRating(MPARatingMapper.toMPARating(request.getMpa()));
+        }
+
+        if (request.hasDirectors()) {
+            film.setDirectors(request.getDirectors().stream()
+                    .map(DirectorMapper::toDirector)
+                    .collect(Collectors.toSet()));
         }
 
         return film;

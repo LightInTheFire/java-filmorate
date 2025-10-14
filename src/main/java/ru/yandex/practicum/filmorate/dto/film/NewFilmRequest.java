@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
+import ru.yandex.practicum.filmorate.dto.director.DirectorDto;
 import ru.yandex.practicum.filmorate.dto.genre.GenreDto;
 import ru.yandex.practicum.filmorate.dto.mparating.MPARatingDto;
 import ru.yandex.practicum.filmorate.validation.AfterDate;
@@ -34,4 +35,6 @@ public class NewFilmRequest {
     MPARatingDto mpa;
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     List<GenreDto> genres = new ArrayList<>();
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
+    List<DirectorDto> directors = new ArrayList<>();
 }
