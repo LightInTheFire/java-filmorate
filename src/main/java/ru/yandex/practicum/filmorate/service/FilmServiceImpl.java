@@ -122,8 +122,8 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public Collection<FilmDto> findFilmsWithTopLikes(int count) {
-        return filmRepository.findTopPopularFilms(count)
+    public Collection<FilmDto> findFilmsWithTopLikes(int count, Integer genreId, Integer year) {
+        return filmRepository.findTopPopularFilms(count, genreId, year)
                 .stream()
                 .map(FilmMapper::toFilmDto)
                 .toList();

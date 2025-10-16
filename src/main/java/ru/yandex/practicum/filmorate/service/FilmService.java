@@ -22,7 +22,7 @@ public interface FilmService {
 
     void removeLike(long filmId, long userId);
 
-    Collection<FilmDto> findFilmsWithTopLikes(int count);
+    Collection<FilmDto> findFilmsWithTopLikes(int count, Integer genreId, Integer year);
 
     Collection<FilmDto> findCommonFilms(long userId, long friendId);
 
