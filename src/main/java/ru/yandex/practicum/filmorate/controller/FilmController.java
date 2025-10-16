@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -77,9 +78,11 @@ public class FilmController {
     }
 
     @GetMapping("/popular")
-    public Collection<FilmDto> findPopular(@RequestParam(defaultValue = "10") @Positive int count) {
-        log.trace("Find popular film requested with count: {}", count);
-        return filmService.findFilmsWithTopLikes(count);
+    public Collection<FilmDto> findPopular(@RequestParam(defaultValue = "10") @Positive int count,
+                                           @RequestParam(defaultValue = "0") @PositiveOrZero int genreId,
+                                           @RequestParam(defaultValue = "0") @PositiveOrZero int year) {
+        log.trace("Find popular film requested with count: {} by genre: {} for year: {}", count, genreId, year);
+        return filmService.findFilmsWithTopLikes(count, genreId, year);
     }
 
     @GetMapping("/director/{directorId}")
