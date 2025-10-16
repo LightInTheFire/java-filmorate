@@ -113,14 +113,18 @@ public class JdbcFilmRepository implements FilmRepository {
     }
 
     @Override
-    public Collection<Film> findTopPopularFilms(int count) {
+    public Collection<Film> findTopPopularFilms(int count, Integer genreId, Integer year) {
         String selectTopFilmsSql = BASE_SELECT_SQL.concat("""
                 LEFT JOIN likes fl ON f.film_id = fl.film_id
-                GROUP BY f.film_id, f.name, g.genre_id
+                WHERE (g.genre_id = :genreId OR :genreId IS NULL)
+                AND (YEAR(f.release_date) =:year OR :year IS NULL)
+                GROUP BY f.film_id
                 ORDER BY COUNT(fl.user_id) DESC, f.film_id
                 LIMIT :count""");
         MapSqlParameterSource params = new MapSqlParameterSource()
-                .addValue("count", count);
+                .addValue("count", count)
+                .addValue("genreId", genreId)
+                .addValue("year", year);
 
         return jdbc.query(selectTopFilmsSql, params, filmRowMapper);
     }

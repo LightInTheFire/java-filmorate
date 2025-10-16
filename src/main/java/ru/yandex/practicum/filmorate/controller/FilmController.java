@@ -77,9 +77,11 @@ public class FilmController {
     }
 
     @GetMapping("/popular")
-    public Collection<FilmDto> findPopular(@RequestParam(defaultValue = "10") @Positive int count) {
-        log.trace("Find popular film requested with count: {}", count);
-        return filmService.findFilmsWithTopLikes(count);
+    public Collection<FilmDto> findPopular(@RequestParam(defaultValue = "10") @Positive int count,
+                                           @RequestParam(required = false) @Positive Integer genreId,
+                                           @RequestParam(required = false) @Positive Integer year) {
+        log.trace("Find popular film requested with count: {} by genre: {} for year: {}", count, genreId, year);
+        return filmService.findFilmsWithTopLikes(count, genreId, year);
     }
 
     @GetMapping("/director/{directorId}")
