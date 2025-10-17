@@ -114,7 +114,6 @@ public void addLike(long filmId, long userId) {
     throwIfFilmNotFound(filmId);
     throwIfUserNotFound(userId);
     likesRepository.addLike(userId, filmId);
-    /*
     eventService.addEvent(Event.builder()
             .userId(userId)
             .eventType(EventType.LIKE)
@@ -122,8 +121,6 @@ public void addLike(long filmId, long userId) {
             .entityId(filmId)
             .timestamp(System.currentTimeMillis())
             .build());
-    */
-    
     log.info("Like to film with id {} has been added by user {}", filmId, userId);
 }
 
@@ -132,7 +129,6 @@ public void removeLike(long filmId, long userId) {
     throwIfFilmNotFound(filmId);
     throwIfUserNotFound(userId);
     likesRepository.removeLike(userId, filmId);
-    /*
     eventService.addEvent(Event.builder()
             .userId(userId)
             .eventType(EventType.LIKE)
@@ -140,8 +136,6 @@ public void removeLike(long filmId, long userId) {
             .entityId(filmId)
             .timestamp(System.currentTimeMillis())
             .build());
-    */
-    
     log.info("Like to film with id {} has been removed by user {}", filmId, userId);
 }
 
@@ -194,5 +188,6 @@ public void removeLike(long filmId, long userId) {
                 .orElseThrow(NotFoundException.supplier("MPA rating with id %d not found", mpaRatingId));
     }
 }
+
 
 
