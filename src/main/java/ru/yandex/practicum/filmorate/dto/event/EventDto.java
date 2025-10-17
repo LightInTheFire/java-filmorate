@@ -6,10 +6,10 @@ import ru.yandex.practicum.filmorate.model.Operation;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record EventDto(
-        Long timestamp,
-        Long userId,
-        EventType eventType,
-        Operation operation,
-        Long eventId,
-        Long entityId
+    Long timestamp,
+    Long userId,
+    EventType eventType,
+    Operation operation,
+    Long eventId,
+    Long entityId
 ) {}
