@@ -1,3 +1,12 @@
+package ru.yandex.practicum.filmorate.repository.friendship;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
 @Repository
 @RequiredArgsConstructor
 public class JdbcFriendshipsRepository implements FriendshipsRepository {
@@ -35,6 +44,18 @@ public class JdbcFriendshipsRepository implements FriendshipsRepository {
                 .addValue("friend_id", friendId);
 
         return Boolean.TRUE.equals(jdbc.queryForObject(checkFriendshipSql, params, Boolean.class));
+    }
+
+    @Override
+    public List<Long> findFriendIdsByUserId(long userId) {
+        String findFriendsSql = """
+                SELECT user_id2
+                FROM friendships
+                WHERE user_id1 = :user_id""";
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("user_id", userId);
+
+        return jdbc.queryForList(findFriendsSql, params, Long.class);
     }
 
     private MapSqlParameterSource getParameterMap(long userId, long friendId) {
