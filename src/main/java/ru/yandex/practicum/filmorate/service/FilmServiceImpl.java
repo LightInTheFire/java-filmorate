@@ -114,8 +114,6 @@ public class FilmServiceImpl implements FilmService {
         throwIfFilmNotFound(filmId);
         throwIfUserNotFound(userId);
         likesRepository.addLike(userId, filmId);
-        
-        // Добавляем событие лайка
         eventService.addEvent(Event.builder()
                 .userId(userId)
                 .eventType(EventType.LIKE)
@@ -123,7 +121,6 @@ public class FilmServiceImpl implements FilmService {
                 .entityId(filmId)
                 .timestamp(System.currentTimeMillis())
                 .build());
-        
         log.info("Like to film with id {} has been added by user {}", filmId, userId);
     }
 
@@ -132,8 +129,6 @@ public class FilmServiceImpl implements FilmService {
         throwIfFilmNotFound(filmId);
         throwIfUserNotFound(userId);
         likesRepository.removeLike(userId, filmId);
-        
-        // Добавляем событие удаления лайка
         eventService.addEvent(Event.builder()
                 .userId(userId)
                 .eventType(EventType.LIKE)
@@ -141,7 +136,6 @@ public class FilmServiceImpl implements FilmService {
                 .entityId(filmId)
                 .timestamp(System.currentTimeMillis())
                 .build());
-        
         log.info("Like to film with id {} has been removed by user {}", filmId, userId);
     }
 
@@ -194,3 +188,4 @@ public class FilmServiceImpl implements FilmService {
                 .orElseThrow(NotFoundException.supplier("MPA rating with id %d not found", mpaRatingId));
     }
 }
+
