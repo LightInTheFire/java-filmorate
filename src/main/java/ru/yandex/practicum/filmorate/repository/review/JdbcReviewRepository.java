@@ -49,7 +49,7 @@ public class JdbcReviewRepository implements ReviewRepository {
                 INSERT INTO film_reviews(film_id, user_id, review_id)
                 VALUES (:film_id, :user_id, :review_id)
                 """, params);
-        review.setUseful_rating(0L);
+        review.setUsefulRating(0L);
         return review;
     }
 

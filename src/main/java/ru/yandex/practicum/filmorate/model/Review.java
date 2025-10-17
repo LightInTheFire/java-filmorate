@@ -14,5 +14,5 @@ public class Review {
     Boolean isPositive;
     Long userId;
     Long filmId;
-    Long useful_rating;
+    Long usefulRating;
 }
