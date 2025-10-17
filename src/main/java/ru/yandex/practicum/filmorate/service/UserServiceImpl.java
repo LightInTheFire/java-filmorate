@@ -68,12 +68,14 @@ public class UserServiceImpl implements UserService {
         log.info("User with id {} deleted", id);
     }
 
-    @Override
+   @Override
 public void addFriend(long userId, long friendId) {
+    log.info("=== ADD FRIEND START ===");
+    log.info("User {} adding friend {}", userId, friendId);
     throwIfUserNotFound(userId);
     throwIfUserNotFound(friendId);
-
     friendshipsRepository.addFriendship(userId, friendId);
+    log.info("Friendship added to database");
     eventService.addEvent(Event.builder()
             .userId(userId)
             .eventType(EventType.FRIEND)
@@ -81,6 +83,8 @@ public void addFriend(long userId, long friendId) {
             .entityId(friendId)
             .timestamp(System.currentTimeMillis())
             .build());
+            
+    log.info("=== ADD FRIEND END ===");
     log.info("User with id {} added user with id {} as friend", userId, friendId);
 }
 
@@ -124,4 +128,5 @@ public void removeFriend(long userId, long friendId) {
     }
 
 }
+
 
