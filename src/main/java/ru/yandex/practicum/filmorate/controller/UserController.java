@@ -13,8 +13,6 @@ import ru.yandex.practicum.filmorate.dto.user.UpdateUserRequest;
 import ru.yandex.practicum.filmorate.dto.user.UserDto;
 import ru.yandex.practicum.filmorate.service.EventService;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.dto.event.EventDto;
-import ru.yandex.practicum.filmorate.service.EventService;
 
 import java.util.Collection;
 
@@ -92,4 +90,5 @@ public class UserController {
         log.trace("Get feed for user with id {} requested", id);
         return eventService.getUserFeed(id);
     }
+
 }
