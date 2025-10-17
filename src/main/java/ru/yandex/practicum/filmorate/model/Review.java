@@ -1,0 +1,18 @@
+package ru.yandex.practicum.filmorate.model;
+
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Data;
+import lombok.experimental.FieldDefaults;
+
+@Data
+@Builder
+@FieldDefaults(level = AccessLevel.PRIVATE)
+public class Review {
+    Long id;
+    String content;
+    Boolean isPositive;
+    Long userId;
+    Long filmId;
+    Long useful_rating;
+}
