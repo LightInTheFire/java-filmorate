@@ -22,7 +22,7 @@ public class Film {
     @Builder.Default
     Set<Genre> genres = new HashSet<>();
     @Builder.Default
-    Set<Long> usersWhoLiked = new HashSet<>();
+    Set<Director> directors = new HashSet<>();
 
     public void addGenre(Genre genre) {
         this.genres.add(genre);
