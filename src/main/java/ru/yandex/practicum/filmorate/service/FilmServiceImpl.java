@@ -110,34 +110,40 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public void addLike(long filmId, long userId) {
-        throwIfFilmNotFound(filmId);
-        throwIfUserNotFound(userId);
-        likesRepository.addLike(userId, filmId);
-        eventService.addEvent(Event.builder()
-                .userId(userId)
-                .eventType(EventType.LIKE)
-                .operation(Operation.ADD)
-                .entityId(filmId)
-                .timestamp(System.currentTimeMillis())
-                .build());
-        log.info("Like to film with id {} has been added by user {}", filmId, userId);
-    }
+public void addLike(long filmId, long userId) {
+    throwIfFilmNotFound(filmId);
+    throwIfUserNotFound(userId);
+    likesRepository.addLike(userId, filmId);
+    /*
+    eventService.addEvent(Event.builder()
+            .userId(userId)
+            .eventType(EventType.LIKE)
+            .operation(Operation.ADD)
+            .entityId(filmId)
+            .timestamp(System.currentTimeMillis())
+            .build());
+    */
+    
+    log.info("Like to film with id {} has been added by user {}", filmId, userId);
+}
 
-    @Override
-    public void removeLike(long filmId, long userId) {
-        throwIfFilmNotFound(filmId);
-        throwIfUserNotFound(userId);
-        likesRepository.removeLike(userId, filmId);
-        eventService.addEvent(Event.builder()
-                .userId(userId)
-                .eventType(EventType.LIKE)
-                .operation(Operation.REMOVE)
-                .entityId(filmId)
-                .timestamp(System.currentTimeMillis())
-                .build());
-        log.info("Like to film with id {} has been removed by user {}", filmId, userId);
-    }
+@Override
+public void removeLike(long filmId, long userId) {
+    throwIfFilmNotFound(filmId);
+    throwIfUserNotFound(userId);
+    likesRepository.removeLike(userId, filmId);
+    /*
+    eventService.addEvent(Event.builder()
+            .userId(userId)
+            .eventType(EventType.LIKE)
+            .operation(Operation.REMOVE)
+            .entityId(filmId)
+            .timestamp(System.currentTimeMillis())
+            .build());
+    */
+    
+    log.info("Like to film with id {} has been removed by user {}", filmId, userId);
+}
 
     @Override
     public Collection<FilmDto> findFilmsWithTopLikes(int count, Integer genreId, Integer year) {
@@ -188,4 +194,5 @@ public class FilmServiceImpl implements FilmService {
                 .orElseThrow(NotFoundException.supplier("MPA rating with id %d not found", mpaRatingId));
     }
 }
+
 
