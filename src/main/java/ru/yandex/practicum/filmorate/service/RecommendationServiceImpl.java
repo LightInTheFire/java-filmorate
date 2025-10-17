@@ -25,7 +25,6 @@ public class RecommendationServiceImpl implements RecommendationService {
         userRepository.findById(userId)
                 .orElseThrow(NotFoundException.supplier("User with id %d not found", userId));
 
-
         Optional<Long> similarUserOpt = userRepository.findSimilarFilmTasteUser(userId);
 
         if (similarUserOpt.isEmpty()) {
