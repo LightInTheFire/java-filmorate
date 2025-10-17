@@ -18,17 +18,27 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<EventDto> getUserFeed(long userId) {
-        List<Event> events = eventRepository.findByUserId(userId);
-        log.trace("Retrieved {} events for user with id: {}", events.size(), userId);
-        return events.stream()
-                .map(EventMapper::toEventDto)
-                .toList();
+        try {
+            List<Event> events = eventRepository.findByUserId(userId);
+            log.trace("Retrieved {} events for user with id: {}", events.size(), userId);
+            return events.stream()
+                    .map(EventMapper::toEventDto)
+                    .toList();
+        } catch (Exception e) {
+            log.error("Error getting feed for user {}: {}", userId, e.getMessage(), e);
+            throw e;
+        }
     }
 
     @Override
     public void addEvent(Event event) {
-        eventRepository.save(event);
-        log.debug("Event saved: {}", event);
+        try {
+            eventRepository.save(event);
+            log.debug("Event saved: {}", event);
+        } catch (Exception e) {
+            log.error("Error saving event: {}", e.getMessage(), e);
+        }
     }
 }
+
 
