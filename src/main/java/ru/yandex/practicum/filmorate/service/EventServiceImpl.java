@@ -1,15 +1,3 @@
-package ru.yandex.practicum.filmorate.service;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.dto.event.EventDto;
-import ru.yandex.practicum.filmorate.mapper.EventMapper;
-import ru.yandex.practicum.filmorate.model.Event;
-import ru.yandex.practicum.filmorate.repository.event.EventRepository;
-
-import java.util.List;
-
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -20,7 +8,16 @@ public class EventServiceImpl implements EventService {
     public List<EventDto> getUserFeed(long userId) {
         try {
             List<Event> events = eventRepository.findByUserId(userId);
-            log.trace("Retrieved {} events for user with id: {}", events.size(), userId);
+            log.info("=== FEED DEBUG ===");
+            log.info("User ID: {}", userId);
+            log.info("Found {} events", events.size());
+            for (Event event : events) {
+                log.info("Event: id={}, type={}, operation={}, entity={}, timestamp={}", 
+                    event.getEventId(), event.getEventType(), event.getOperation(), 
+                    event.getEntityId(), event.getTimestamp());
+            }
+            log.info("=== END FEED DEBUG ===");
+            
             return events.stream()
                     .map(EventMapper::toEventDto)
                     .toList();
@@ -33,12 +30,17 @@ public class EventServiceImpl implements EventService {
     @Override
     public void addEvent(Event event) {
         try {
+            log.info("=== ADD EVENT DEBUG ===");
+            log.info("Saving event: userId={}, type={}, operation={}, entityId={}, timestamp={}",
+                event.getUserId(), event.getEventType(), event.getOperation(),
+                event.getEntityId(), event.getTimestamp());
+            
             eventRepository.save(event);
-            log.debug("Event saved: {}", event);
+            
+            log.info("Event saved with ID: {}", event.getEventId());
+            log.info("=== END ADD EVENT DEBUG ===");
         } catch (Exception e) {
             log.error("Error saving event: {}", e.getMessage(), e);
         }
     }
 }
-
-
