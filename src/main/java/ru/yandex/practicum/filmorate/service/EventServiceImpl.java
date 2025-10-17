@@ -20,7 +20,6 @@ public class EventServiceImpl implements EventService {
     public List<EventDto> getUserFeed(long userId) {
         List<Event> events = eventRepository.findByUserId(userId);
         log.trace("Retrieved {} events for user with id: {}", events.size(), userId);
-        
         return events.stream()
                 .map(EventMapper::toEventDto)
                 .toList();
@@ -32,3 +31,4 @@ public class EventServiceImpl implements EventService {
         log.debug("Event saved: {}", event);
     }
 }
+
