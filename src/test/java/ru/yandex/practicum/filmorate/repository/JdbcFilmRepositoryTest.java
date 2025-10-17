@@ -20,6 +20,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @JdbcTest
 @Import({JdbcFilmRepository.class, FilmRowMapper.class})
 public class JdbcFilmRepositoryTest {
+    @MockBean
+    private UserRepository userRepository;
+
     @Autowired
     private JdbcFilmRepository filmRepository;
 

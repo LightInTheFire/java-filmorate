@@ -10,6 +10,8 @@ import ru.yandex.practicum.filmorate.repository.film.FilmRepository;
 import ru.yandex.practicum.filmorate.repository.user.UserRepository;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -22,7 +24,16 @@ public class RecommendationServiceImpl implements RecommendationService {
     public Collection<FilmDto> findFilmRecommendations(long userId) {
         userRepository.findById(userId)
                 .orElseThrow(NotFoundException.supplier("User with id %d not found", userId));
-        return filmRepository.findFilmRecommendations(userId)
+
+
+        Optional<Long> similarUserOpt = userRepository.findSimilarFilmTasteUser(userId);
+
+        if (similarUserOpt.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        long similarUserId = similarUserOpt.get();
+        return filmRepository.findFilmRecommendations(userId, similarUserId)
                 .stream()
                 .map(FilmMapper::toFilmDto)
                 .toList();
