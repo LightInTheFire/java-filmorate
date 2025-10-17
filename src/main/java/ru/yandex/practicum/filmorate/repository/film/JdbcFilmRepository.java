@@ -12,10 +12,7 @@ import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Repository
 @RequiredArgsConstructor
@@ -39,6 +36,7 @@ public class JdbcFilmRepository implements FilmRepository {
             """;
     private final NamedParameterJdbcOperations jdbc;
     private final RowMapper<Film> filmRowMapper;
+    private final FilmResultSetExtractor filmResultSetExtractor;
 
     @Override
     public Optional<Film> findById(long id) {
@@ -188,7 +186,7 @@ public class JdbcFilmRepository implements FilmRepository {
                     conditions.add("LOWER(f.name) LIKE :query");
                     break;
                 case "director":
-                    conditions.add("LOWER(f.director) LIKE :query");
+                    conditions.add("LOWER(d.name) LIKE :query");
                     break;
             }
         }
@@ -206,13 +204,15 @@ public class JdbcFilmRepository implements FilmRepository {
                        f.mpa_id,
                        mr.name AS mpa_name,
                        g.genre_id,
-                       g.name AS genre_name,
-                       f.director
+                       g.name AS genre_name
                 FROM films f
                 JOIN mpa_ratings mr ON f.mpa_id = mr.mpa_id
                 LEFT JOIN film_genres fg ON f.film_id = fg.film_id
                 LEFT JOIN genres g ON g.genre_id = fg.genre_id
+                LEFT JOIN film_directors fd ON f.film_id = fd.film_id
+                LEFT JOIN directors d ON fd.director_id = d.director_id
                 WHERE """ + whereClause + """
+                GROUP BY f.film_id, g.genre_id
                 ORDER BY (SELECT COUNT(*) FROM likes l WHERE l.film_id = f.film_id) DESC, f.film_id""";
     }
 

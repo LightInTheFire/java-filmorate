@@ -157,6 +157,10 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public Collection<FilmDto> searchFilms(String query, String by) {
+        if (!by.matches("^(title|director)(,(title|director))?$")) {
+            throw new IllegalArgumentException("Parameter 'by' must be 'title', 'director' or 'title,director'");
+        }
+
         return filmRepository.searchFilms(query, by)
                 .stream()
                 .map(FilmMapper::toFilmDto)
