@@ -27,5 +27,6 @@ public interface FilmService {
     Collection<FilmDto> findCommonFilms(long userId, long friendId);
 
     Collection<FilmDto> findFilmsOfDirector(long directorId, FilmsSortBy sortFilmsBy);
+
     Collection<FilmDto> searchFilms(String query, String by);
 }
