@@ -74,7 +74,6 @@ public void addFriend(long userId, long friendId) {
     throwIfUserNotFound(friendId);
 
     friendshipsRepository.addFriendship(userId, friendId);
-    /*
     eventService.addEvent(Event.builder()
             .userId(userId)
             .eventType(EventType.FRIEND)
@@ -82,8 +81,6 @@ public void addFriend(long userId, long friendId) {
             .entityId(friendId)
             .timestamp(System.currentTimeMillis())
             .build());
-    */
-
     log.info("User with id {} added user with id {} as friend", userId, friendId);
 }
 
@@ -92,7 +89,6 @@ public void removeFriend(long userId, long friendId) {
     throwIfUserNotFound(userId);
     throwIfUserNotFound(friendId);
     friendshipsRepository.removeFriendship(userId, friendId);
-    /*
     eventService.addEvent(Event.builder()
             .userId(userId)
             .eventType(EventType.FRIEND)
@@ -100,9 +96,7 @@ public void removeFriend(long userId, long friendId) {
             .entityId(friendId)
             .timestamp(System.currentTimeMillis())
             .build());
-    */
-
-    log.info("User with id {} removed user with id {} from friends", userId, friendId);
+     log.info("User with id {} removed user with id {} from friends", userId, friendId);
 }
 
     @Override
@@ -130,3 +124,4 @@ public void removeFriend(long userId, long friendId) {
     }
 
 }
+
