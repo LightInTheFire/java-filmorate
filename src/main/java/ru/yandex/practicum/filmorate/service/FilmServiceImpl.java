@@ -111,9 +111,12 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
 public void addLike(long filmId, long userId) {
+    log.info("=== ADD LIKE START ===");
+    log.info("User {} liking film {}", userId, filmId);
     throwIfFilmNotFound(filmId);
     throwIfUserNotFound(userId);
     likesRepository.addLike(userId, filmId);
+    log.info("Like added to database");
     eventService.addEvent(Event.builder()
             .userId(userId)
             .eventType(EventType.LIKE)
@@ -121,6 +124,7 @@ public void addLike(long filmId, long userId) {
             .entityId(filmId)
             .timestamp(System.currentTimeMillis())
             .build());
+    log.info("=== ADD LIKE END ===");
     log.info("Like to film with id {} has been added by user {}", filmId, userId);
 }
 
@@ -188,6 +192,7 @@ public void removeLike(long filmId, long userId) {
                 .orElseThrow(NotFoundException.supplier("MPA rating with id %d not found", mpaRatingId));
     }
 }
+
 
 
 
