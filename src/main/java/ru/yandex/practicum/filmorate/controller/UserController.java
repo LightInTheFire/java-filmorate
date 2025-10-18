@@ -7,9 +7,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.dto.film.FilmDto;
 import ru.yandex.practicum.filmorate.dto.user.NewUserRequest;
 import ru.yandex.practicum.filmorate.dto.user.UpdateUserRequest;
 import ru.yandex.practicum.filmorate.dto.user.UserDto;
+import ru.yandex.practicum.filmorate.service.RecommendationService;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.util.Collection;
@@ -22,6 +24,7 @@ import java.util.Collection;
 @Validated
 public class UserController {
     private final UserService userService;
+    private final RecommendationService recommendationService;
 
     @GetMapping
     public Collection<UserDto> findAll() {
@@ -81,5 +84,11 @@ public class UserController {
                                                  @PathVariable @Positive long otherId) {
         log.trace("Find common friends requested for id {}, other id: {}", id, otherId);
         return userService.findAllCommonFriends(id, otherId);
+    }
+
+    @GetMapping("/{id}/recommendations")
+    public Collection<FilmDto> findFilmRecommendations(@PathVariable @Positive long id) {
+        log.trace("Find film recommendations requested for id {}", id);
+        return recommendationService.findFilmRecommendations(id);
     }
 }
