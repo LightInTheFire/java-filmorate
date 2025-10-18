@@ -74,14 +74,7 @@ public class UserServiceImpl implements UserService {
         throwIfUserNotFound(userId);
         throwIfUserNotFound(friendId);
         friendshipsRepository.addFriendship(userId, friendId);
-        Event event = Event.builder()
-                .timestamp(System.currentTimeMillis())
-                .userId(userId)
-                .eventType(EventType.FRIEND)
-                .operation(Operation.ADD)
-                .entityId(friendId)
-                .build();
-        feedService.addEvent(event);
+        feedService.addEvent(EventType.FRIEND, Operation.ADD, userId, friendId);
         log.info("User with id {} added user with id {} as friend", userId, friendId);
     }
 
@@ -90,14 +83,7 @@ public class UserServiceImpl implements UserService {
         throwIfUserNotFound(userId);
         throwIfUserNotFound(friendId);
         friendshipsRepository.removeFriendship(userId, friendId);
-        Event event = Event.builder()
-                .timestamp(System.currentTimeMillis())
-                .userId(userId)
-                .eventType(EventType.FRIEND)
-                .operation(Operation.REMOVE)
-                .entityId(friendId)
-                .build();
-        feedService.addEvent(event);
+        feedService.addEvent(EventType.FRIEND, Operation.REMOVE, userId, friendId);
         log.info("User with id {} removed user with id {} from friends", userId, friendId);
     }
 
