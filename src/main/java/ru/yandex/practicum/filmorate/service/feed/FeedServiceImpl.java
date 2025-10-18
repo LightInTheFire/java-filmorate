@@ -28,7 +28,6 @@ public class FeedServiceImpl implements FeedService {
 
         List<Event> events = feedRepository.findByUserId(userId);
         log.info("Retrieved {} events for user {}", events.size(), userId);
-        
         return events.stream()
                 .map(EventMapper::toEventDto)
                 .toList();
@@ -43,9 +42,8 @@ public class FeedServiceImpl implements FeedService {
                 .operation(operation)
                 .entityId(entityId)
                 .build();
-        
         feedRepository.save(event);
-        log.debug("Event saved: type={}, operation={}, userId={}, entityId={}", 
+        log.debug("Event saved: type={}, operation={}, userId={}, entityId={}",
             eventType, operation, userId, entityId);
     }
 }
