@@ -22,4 +22,6 @@ public interface FilmRepository {
     Collection<Film> findCommonFilms(long userId, long friendId);
 
     Collection<Film> findFilmsOfDirector(long directorId, FilmsSortBy sortFilmsBy);
+
+    Collection<Film> findFilmRecommendations(long userId, long similarUserId);
 }

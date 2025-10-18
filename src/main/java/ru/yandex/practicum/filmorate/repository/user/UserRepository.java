@@ -19,4 +19,6 @@ public interface UserRepository {
     Collection<User> findAllFriends(long userId);
 
     Collection<User> findAllCommonFriends(long userId1, long userId2);
+
+    Optional<Long> findSimilarFilmTasteUser(long userId);
 }

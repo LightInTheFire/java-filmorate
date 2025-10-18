@@ -168,6 +168,24 @@ public class JdbcFilmRepository implements FilmRepository {
         return jdbc.query(selectFilmsOfDirectorSortedSql, params, filmRowMapper);
     }
 
+    @Override
+    public Collection<Film> findFilmRecommendations(long userId, long similarUserId) {
+        String sqlRecommendations = BASE_SELECT_SQL.concat("""
+            LEFT JOIN likes l ON f.film_id = l.film_id
+            WHERE l.user_id = :similarUserId
+              AND f.film_id NOT IN (
+                  SELECT film_id FROM likes WHERE user_id = :userId
+              )
+            GROUP BY f.film_id
+            """);
+
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("similarUserId", similarUserId)
+                .addValue("userId", userId);
+
+        return jdbc.query(sqlRecommendations, params, filmRowMapper);
+    }
+
     private void saveGenres(Set<Genre> genres, long filmId) {
         String insertGenresSql = """
                 INSERT INTO film_genres (film_id, genre_id)
