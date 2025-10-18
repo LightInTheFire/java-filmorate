@@ -8,9 +8,12 @@ import ru.yandex.practicum.filmorate.dto.user.UpdateUserRequest;
 import ru.yandex.practicum.filmorate.dto.user.UserDto;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.mapper.UserMapper;
+import ru.yandex.practicum.filmorate.model.EventType;
+import ru.yandex.practicum.filmorate.model.Operation;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.repository.friendship.FriendshipsRepository;
 import ru.yandex.practicum.filmorate.repository.user.UserRepository;
+import ru.yandex.practicum.filmorate.service.feed.FeedService;
 
 import java.util.Collection;
 
@@ -20,6 +23,7 @@ import java.util.Collection;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final FriendshipsRepository friendshipsRepository;
+    private final FeedService feedService;
 
     @Override
     public Collection<UserDto> findAll() {
@@ -68,8 +72,8 @@ public class UserServiceImpl implements UserService {
     public void addFriend(long userId, long friendId) {
         throwIfUserNotFound(userId);
         throwIfUserNotFound(friendId);
-
         friendshipsRepository.addFriendship(userId, friendId);
+        feedService.addEvent(EventType.FRIEND, Operation.ADD, userId, friendId);
         log.info("User with id {} added user with id {} as friend", userId, friendId);
     }
 
@@ -78,6 +82,7 @@ public class UserServiceImpl implements UserService {
         throwIfUserNotFound(userId);
         throwIfUserNotFound(friendId);
         friendshipsRepository.removeFriendship(userId, friendId);
+        feedService.addEvent(EventType.FRIEND, Operation.REMOVE, userId, friendId);
         log.info("User with id {} removed user with id {} from friends", userId, friendId);
     }
 
