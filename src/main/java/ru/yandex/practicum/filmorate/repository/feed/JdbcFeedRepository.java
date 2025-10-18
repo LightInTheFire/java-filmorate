@@ -18,8 +18,8 @@ public class JdbcFeedRepository implements FeedRepository {
     @Override
     public List<Event> findByUserId(long userId) {
         String sql = "SELECT * FROM feed_events WHERE user_id = :user_id ORDER BY timestamp ASC";
-        return jdbc.query(sql, 
-            new MapSqlParameterSource("user_id", userId), 
+        return jdbc.query(sql,
+            new MapSqlParameterSource("user_id", userId),
             eventRowMapper);
     }
 
@@ -32,12 +32,10 @@ public class JdbcFeedRepository implements FeedRepository {
             .addValue("event_type", event.getEventType().toString())
             .addValue("operation", event.getOperation().toString())
             .addValue("entity_id", event.getEntityId());
-            
         String sql = """
             INSERT INTO feed_events (timestamp, user_id, event_type, operation, entity_id)
             VALUES (:timestamp, :user_id, :event_type, :operation, :entity_id)
             """;
-            
         jdbc.update(sql, params, keyHolder, new String[]{"event_id"});
         event.setEventId(keyHolder.getKeyAs(Long.class));
         return event;
