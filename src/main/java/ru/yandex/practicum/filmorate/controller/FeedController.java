@@ -14,7 +14,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FeedController {
     private final FeedService feedService;
-    
     @GetMapping("/{id}/feed")
     public List<EventDto> getUserFeed(@PathVariable long id) {
         log.info("GET /users/{}/feed", id);
