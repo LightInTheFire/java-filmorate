@@ -5,5 +5,7 @@ import java.util.List;
 
 public interface FeedRepository {
     List<Event> findByUserId(long userId);
+    
     Event save(Event event);
+
 }
