@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.dto.review.NewReviewRequest;
@@ -22,6 +23,7 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public ReviewDto create(@Valid @RequestBody NewReviewRequest request) {
         log.trace("Create review request: {}", request);
         return reviewService.create(request);
