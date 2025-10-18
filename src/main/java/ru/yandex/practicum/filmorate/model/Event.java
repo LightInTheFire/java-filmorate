@@ -1,15 +1,18 @@
 package ru.yandex.practicum.filmorate.model;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.FieldDefaults;
 
 @Data
 @Builder
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Event {
-    private Long eventId;
-    private Long timestamp;
-    private Long userId;
-    private EventType eventType;
-    private Operation operation;
-    private Long entityId;
+    Long eventId;
+    Long timestamp;
+    Long userId;
+    EventType eventType;
+    Operation operation;
+    Long entityId;
 }
