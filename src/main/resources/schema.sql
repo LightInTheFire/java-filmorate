@@ -102,3 +102,13 @@ CREATE TABLE IF NOT EXISTS review_likes
     FOREIGN KEY (review_id) REFERENCES reviews (review_id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS feed_events (
+    event_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    timestamp BIGINT NOT NULL,
+    user_id BIGINT NOT NULL,
+    event_type ENUM('LIKE', 'REVIEW', 'FRIEND') NOT NULL,
+    operation ENUM('REMOVE', 'ADD', 'UPDATE') NOT NULL,
+    entity_id BIGINT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
+);

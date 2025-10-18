@@ -3,13 +3,19 @@ package ru.yandex.practicum.filmorate.service.review;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.dto.review.*;
+import ru.yandex.practicum.filmorate.dto.review.NewReviewRequest;
+import ru.yandex.practicum.filmorate.dto.review.ReviewDto;
+import ru.yandex.practicum.filmorate.dto.review.UpdateReviewRequest;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.mapper.ReviewMapper;
+import ru.yandex.practicum.filmorate.model.Event;
+import ru.yandex.practicum.filmorate.model.EventType;
+import ru.yandex.practicum.filmorate.model.Operation;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.repository.film.FilmRepository;
 import ru.yandex.practicum.filmorate.repository.review.ReviewRepository;
 import ru.yandex.practicum.filmorate.repository.user.UserRepository;
+import ru.yandex.practicum.filmorate.service.feed.FeedService;
 
 import java.util.Collection;
 
@@ -20,6 +26,7 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
     private final FilmRepository filmRepository;
+    private final FeedService feedService;
 
     @Override
     public ReviewDto create(NewReviewRequest request) {
@@ -27,6 +34,15 @@ public class ReviewServiceImpl implements ReviewService {
         throwIfFilmNotFound(request.getFilmId());
         Review review = ReviewMapper.toReview(request);
         review = reviewRepository.save(review);
+        Event event = Event.builder()
+                .timestamp(System.currentTimeMillis())
+                .userId(request.getUserId())
+                .eventType(EventType.REVIEW)
+                .operation(Operation.ADD)
+                .entityId(review.getId())
+                .build();
+        feedService.addEvent(event);
+
         log.info("Review with reviewId {} has been created", review.getId());
         return ReviewMapper.toDto(review);
     }
@@ -35,6 +51,14 @@ public class ReviewServiceImpl implements ReviewService {
     public ReviewDto update(UpdateReviewRequest request) {
         Review review = getReviewOrThrow(request.getReviewId());
         review = ReviewMapper.updateReviewFields(review, request);
+        Event event = Event.builder()
+                .timestamp(System.currentTimeMillis())
+                .userId(review.getUserId())
+                .eventType(EventType.REVIEW)
+                .operation(Operation.UPDATE)
+                .entityId(review.getId())
+                .build();
+        feedService.addEvent(event);
         log.info("Review with reviewId {} has been updated", review.getId());
         reviewRepository.update(review);
         return ReviewMapper.toDto(review);
@@ -42,7 +66,15 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public void delete(long id) {
-        getReviewOrThrow(id);
+        Review review = getReviewOrThrow(id);
+        Event event = Event.builder()
+                .timestamp(System.currentTimeMillis())
+                .userId(review.getUserId())
+                .eventType(EventType.REVIEW)
+                .operation(Operation.REMOVE)
+                .entityId(id)
+                .build();
+        feedService.addEvent(event);
         log.info("Review with reviewId {} has been deleted", id);
         reviewRepository.delete(id);
     }
