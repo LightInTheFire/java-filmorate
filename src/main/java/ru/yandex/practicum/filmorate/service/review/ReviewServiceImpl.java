@@ -34,15 +34,7 @@ public class ReviewServiceImpl implements ReviewService {
         throwIfFilmNotFound(request.getFilmId());
         Review review = ReviewMapper.toReview(request);
         review = reviewRepository.save(review);
-        Event event = Event.builder()
-                .timestamp(System.currentTimeMillis())
-                .userId(request.getUserId())
-                .eventType(EventType.REVIEW)
-                .operation(Operation.ADD)
-                .entityId(review.getId())
-                .build();
-        feedService.addEvent(event);
-
+        feedService.addEvent(EventType.REVIEW, Operation.ADD, request.getUserId(), review.getId());
         log.info("Review with reviewId {} has been created", review.getId());
         return ReviewMapper.toDto(review);
     }
@@ -51,14 +43,7 @@ public class ReviewServiceImpl implements ReviewService {
     public ReviewDto update(UpdateReviewRequest request) {
         Review review = getReviewOrThrow(request.getReviewId());
         review = ReviewMapper.updateReviewFields(review, request);
-        Event event = Event.builder()
-                .timestamp(System.currentTimeMillis())
-                .userId(review.getUserId())
-                .eventType(EventType.REVIEW)
-                .operation(Operation.UPDATE)
-                .entityId(review.getId())
-                .build();
-        feedService.addEvent(event);
+        feedService.addEvent(EventType.REVIEW, Operation.UPDATE, review.getUserId(), review.getId());
         log.info("Review with reviewId {} has been updated", review.getId());
         reviewRepository.update(review);
         return ReviewMapper.toDto(review);
@@ -67,14 +52,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public void delete(long id) {
         Review review = getReviewOrThrow(id);
-        Event event = Event.builder()
-                .timestamp(System.currentTimeMillis())
-                .userId(review.getUserId())
-                .eventType(EventType.REVIEW)
-                .operation(Operation.REMOVE)
-                .entityId(id)
-                .build();
-        feedService.addEvent(event);
+        feedService.addEvent(EventType.REVIEW, Operation.REMOVE, review.getUserId(), id);
         log.info("Review with reviewId {} has been deleted", id);
         reviewRepository.delete(id);
     }
