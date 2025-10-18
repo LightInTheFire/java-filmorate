@@ -13,4 +13,3 @@ public class Event {
     private Operation operation;
     private Long entityId;
 }
-

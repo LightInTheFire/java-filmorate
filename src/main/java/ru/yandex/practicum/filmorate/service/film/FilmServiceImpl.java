@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.service.film;
+package ru.yandex.practicum.filmorate.service;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +41,6 @@ public class FilmServiceImpl implements FilmService {
     GenreRepository genreRepository;
     MPARatingRepository mpaRepository;
     DirectorRepository directorRepository;
-    FeedService feedService;
 
     @Override
     public Collection<FilmDto> findAll() {
