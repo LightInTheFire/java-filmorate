@@ -20,12 +20,12 @@ public class JdbcFeedRepository implements FeedRepository {
     private final NamedParameterJdbcOperations jdbc;
 
     @Override
-    public List<Event> findByUserId(long userId) {
-        String sql = "SELECT * FROM feed_events WHERE user_id = :user_id ORDER BY timestamp DESC";
-        return jdbc.query(sql,
-                new MapSqlParameterSource("user_id", userId),
-                new EventRowMapper());
-    }
+public List<Event> findByUserId(long userId) {
+    String sql = "SELECT * FROM feed_events WHERE user_id = :user_id ORDER BY timestamp ASC, event_id ASC";
+    return jdbc.query(sql, 
+        new MapSqlParameterSource("user_id", userId), 
+        new EventRowMapper());
+}
 
     @Override
     public Event save(Event event) {
