@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.filmorate.dto.mparating.MPARatingDto;
-import ru.yandex.practicum.filmorate.service.MPARatingService;
+import ru.yandex.practicum.filmorate.service.mparating.MPARatingService;
 
 import java.util.Collection;
 

@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.service;
+package ru.yandex.practicum.filmorate.service.user;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto create(NewUserRequest request) {
-        if (request.getName() == null) {
+        if (request.getName() == null || request.getName().isEmpty()) {
             request.setName(request.getLogin());
         }
         User user = UserMapper.mapToUser(request);

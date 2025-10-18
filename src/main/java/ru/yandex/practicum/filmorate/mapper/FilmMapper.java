@@ -6,9 +6,6 @@ import ru.yandex.practicum.filmorate.dto.film.NewFilmRequest;
 import ru.yandex.practicum.filmorate.dto.film.UpdateFilmRequest;
 import ru.yandex.practicum.filmorate.dto.genre.GenreDto;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
-
-import java.util.stream.Collectors;
 
 @UtilityClass
 public class FilmMapper {
@@ -40,15 +37,14 @@ public class FilmMapper {
                 .mpaRating(MPARatingMapper.toMPARating(request.getMpa()))
                 .genres(request.getGenres()
                         .stream()
-                        .map(genreDto -> Genre.builder()
-                                .id(genreDto.id())
-                                .name(genreDto.name())
-                                .build())
-                        .collect(Collectors.toSet()))
+                        .map(GenreMapper::toGenre)
+                        .distinct()
+                        .toList())
                 .directors(request.getDirectors()
                         .stream()
                         .map(DirectorMapper::toDirector)
-                        .collect(Collectors.toSet()))
+                        .distinct()
+                        .toList())
                 .build();
     }
 
@@ -72,7 +68,8 @@ public class FilmMapper {
         if (request.hasGenres()) {
             film.setGenres(request.getGenres().stream()
                     .map(GenreMapper::toGenre)
-                    .collect(Collectors.toSet()));
+                    .distinct()
+                    .toList());
         }
 
         if (request.hasMpa()) {
@@ -82,7 +79,8 @@ public class FilmMapper {
         if (request.hasDirectors()) {
             film.setDirectors(request.getDirectors().stream()
                     .map(DirectorMapper::toDirector)
-                    .collect(Collectors.toSet()));
+                    .distinct()
+                    .toList());
         }
 
         return film;

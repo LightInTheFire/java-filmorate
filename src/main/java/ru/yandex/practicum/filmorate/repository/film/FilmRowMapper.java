@@ -12,8 +12,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.List;
 
 @Component
 public class FilmRowMapper implements RowMapper<Film> {
@@ -25,7 +24,7 @@ public class FilmRowMapper implements RowMapper<Film> {
                 .build();
 
         String genresString = rs.getString("genres");
-        Set<Genre> genres;
+        List<Genre> genres;
         if (genresString != null && !genresString.isEmpty() && !genresString.startsWith(":")) {
             genres = Arrays.stream(genresString.split(";"))
                     .map(genreIdNameStr -> {
@@ -35,13 +34,13 @@ public class FilmRowMapper implements RowMapper<Film> {
                                 .name(splitIdNameStr[1])
                                 .build();
                     })
-                    .collect(Collectors.toSet());
+                    .toList();
         } else {
-            genres = Collections.emptySet();
+            genres = Collections.emptyList();
         }
 
         String directorsString = rs.getString("directors");
-        Set<Director> directors;
+        List<Director> directors;
         if (directorsString != null && !directorsString.isEmpty() && !directorsString.startsWith(":")) {
             directors = Arrays.stream(directorsString.split(";"))
                     .map(directorIdNameStr -> {
@@ -51,9 +50,9 @@ public class FilmRowMapper implements RowMapper<Film> {
                                 .name(splitIdNameStr[1])
                                 .build();
                     })
-                    .collect(Collectors.toSet());
+                    .toList();
         } else {
-            directors = Collections.emptySet();
+            directors = Collections.emptyList();
         }
 
         return Film.builder()

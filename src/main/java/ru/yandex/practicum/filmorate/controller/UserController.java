@@ -11,8 +11,8 @@ import ru.yandex.practicum.filmorate.dto.film.FilmDto;
 import ru.yandex.practicum.filmorate.dto.user.NewUserRequest;
 import ru.yandex.practicum.filmorate.dto.user.UpdateUserRequest;
 import ru.yandex.practicum.filmorate.dto.user.UserDto;
-import ru.yandex.practicum.filmorate.service.RecommendationService;
-import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.service.recommendation.RecommendationService;
+import ru.yandex.practicum.filmorate.service.user.UserService;
 
 import java.util.Collection;
 
@@ -60,8 +60,8 @@ public class UserController {
     }
 
     @PutMapping("/{id}/friends/{friendId}")
-    public void addFriend(@PathVariable @Positive long id,
-                          @PathVariable @Positive long friendId) {
+    public void addFriend(@PathVariable long id,
+                          @PathVariable long friendId) {
         log.trace("Add friend requested for id {}, friend id: {}", id, friendId);
         userService.addFriend(id, friendId);
     }
