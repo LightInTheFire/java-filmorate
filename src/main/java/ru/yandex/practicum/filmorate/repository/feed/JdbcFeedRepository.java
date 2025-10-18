@@ -22,8 +22,8 @@ public class JdbcFeedRepository implements FeedRepository {
     @Override
 public List<Event> findByUserId(long userId) {
     String sql = "SELECT * FROM feed_events WHERE user_id = :user_id ORDER BY timestamp ASC, event_id ASC";
-    return jdbc.query(sql, 
-        new MapSqlParameterSource("user_id", userId), 
+    return jdbc.query(sql,
+        new MapSqlParameterSource("user_id", userId),
         new EventRowMapper());
 }
 
