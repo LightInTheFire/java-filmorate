@@ -1,5 +1,7 @@
 package ru.yandex.practicum.filmorate.dto.film;
 
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
@@ -30,6 +32,11 @@ public class UpdateFilmRequest {
     List<GenreDto> genres;
     List<DirectorDto> directors;
 
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
+    public void setDirectors(List<DirectorDto> directors) {
+        this.directors = directors;
+    }
+
     public boolean hasName() {
         return name != null && !name.isEmpty();
     }
@@ -47,7 +54,7 @@ public class UpdateFilmRequest {
     }
 
     public boolean hasGenres() {
-        return genres != null && !genres.isEmpty();
+        return genres != null;
     }
 
     public boolean hasMpa() {
@@ -55,6 +62,6 @@ public class UpdateFilmRequest {
     }
 
     public boolean hasDirectors() {
-        return directors != null && !directors.isEmpty();
+        return directors != null;
     }
 }

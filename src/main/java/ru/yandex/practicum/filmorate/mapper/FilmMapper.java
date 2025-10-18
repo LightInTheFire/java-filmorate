@@ -8,8 +8,6 @@ import ru.yandex.practicum.filmorate.dto.genre.GenreDto;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 
-import java.util.stream.Collectors;
-
 @UtilityClass
 public class FilmMapper {
     public FilmDto toFilmDto(Film film) {
@@ -44,11 +42,11 @@ public class FilmMapper {
                                 .id(genreDto.id())
                                 .name(genreDto.name())
                                 .build())
-                        .collect(Collectors.toSet()))
+                        .toList())
                 .directors(request.getDirectors()
                         .stream()
                         .map(DirectorMapper::toDirector)
-                        .collect(Collectors.toSet()))
+                        .toList())
                 .build();
     }
 
@@ -72,7 +70,8 @@ public class FilmMapper {
         if (request.hasGenres()) {
             film.setGenres(request.getGenres().stream()
                     .map(GenreMapper::toGenre)
-                    .collect(Collectors.toSet()));
+                    .distinct()
+                    .toList());
         }
 
         if (request.hasMpa()) {
@@ -82,7 +81,8 @@ public class FilmMapper {
         if (request.hasDirectors()) {
             film.setDirectors(request.getDirectors().stream()
                     .map(DirectorMapper::toDirector)
-                    .collect(Collectors.toSet()));
+                    .distinct()
+                    .toList());
         }
 
         return film;

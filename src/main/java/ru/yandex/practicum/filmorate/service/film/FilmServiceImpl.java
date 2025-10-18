@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.service;
+package ru.yandex.practicum.filmorate.service.film;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -6,12 +6,14 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.controller.FilmsSortBy;
+import ru.yandex.practicum.filmorate.dto.director.DirectorDto;
 import ru.yandex.practicum.filmorate.dto.film.FilmDto;
 import ru.yandex.practicum.filmorate.dto.film.NewFilmRequest;
 import ru.yandex.practicum.filmorate.dto.film.UpdateFilmRequest;
 import ru.yandex.practicum.filmorate.dto.genre.GenreDto;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.mapper.FilmMapper;
+import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.repository.director.DirectorRepository;
@@ -67,6 +69,17 @@ public class FilmServiceImpl implements FilmService {
             throw new NotFoundException("No such genres found");
         }
 
+        List<Long> directorIds = request.getDirectors().stream()
+                .distinct()
+                .map(DirectorDto::id)
+                .toList();
+
+        List<Director> directors = directorRepository.getByIds(directorIds);
+
+        if (directorIds.size() != directors.size()) {
+            throw new NotFoundException("No such directors found");
+        }
+
         film = filmRepository.save(film);
         log.info("Film with id {} has been created", film.getId());
         return FilmMapper.toFilmDto(film);
@@ -90,6 +103,20 @@ public class FilmServiceImpl implements FilmService {
 
             if (genreIds.size() != genres.size()) {
                 throw new NotFoundException("No such genres found");
+            }
+        }
+
+        if (request.hasDirectors()) {
+
+            List<Long> directorIds = request.getDirectors().stream()
+                    .distinct()
+                    .map(DirectorDto::id)
+                    .toList();
+
+            List<Director> directors = directorRepository.getByIds(directorIds);
+
+            if (directorIds.size() != directors.size()) {
+                throw new NotFoundException("No such directors found");
             }
         }
 

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.dto.director.DirectorDto;
 import ru.yandex.practicum.filmorate.dto.director.NewDirectorRequest;
 import ru.yandex.practicum.filmorate.dto.director.UpdateDirectorRequest;
-import ru.yandex.practicum.filmorate.service.DirectorService;
+import ru.yandex.practicum.filmorate.service.director.DirectorService;
 
 import java.util.Collection;
 
