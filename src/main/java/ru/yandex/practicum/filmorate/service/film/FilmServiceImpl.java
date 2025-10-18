@@ -142,17 +142,7 @@ public class FilmServiceImpl implements FilmService {
         throwIfFilmNotFound(filmId);
         throwIfUserNotFound(userId);
         likesRepository.addLike(userId, filmId);
-
-        // Добавляем событие в ленту
-        Event event = Event.builder()
-                .timestamp(System.currentTimeMillis())
-                .userId(userId)
-                .eventType(EventType.LIKE)
-                .operation(Operation.ADD)
-                .entityId(filmId)
-                .build();
-        feedService.addEvent(event);
-
+        feedService.addEvent(EventType.LIKE, Operation.ADD, userId, filmId);
         log.info("Like to film with id {} has been added by user {}", filmId, userId);
     }
 
@@ -161,17 +151,7 @@ public class FilmServiceImpl implements FilmService {
         throwIfFilmNotFound(filmId);
         throwIfUserNotFound(userId);
         likesRepository.removeLike(userId, filmId);
-
-        // Добавляем событие в ленту
-        Event event = Event.builder()
-                .timestamp(System.currentTimeMillis())
-                .userId(userId)
-                .eventType(EventType.LIKE)
-                .operation(Operation.REMOVE)
-                .entityId(filmId)
-                .build();
-        feedService.addEvent(event);
-
+        feedService.addEvent(EventType.LIKE, Operation.REMOVE, userId, filmId);
         log.info("Like to film with id {} has been removed by user {}", filmId, userId);
     }
 
