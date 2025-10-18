@@ -3,7 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.model.Event;
+import ru.yandex.practicum.filmorate.dto.event.EventDto;
 import ru.yandex.practicum.filmorate.service.feed.FeedService;
 
 import java.util.List;
@@ -14,9 +14,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FeedController {
     private final FeedService feedService;
-
+    
     @GetMapping("/{id}/feed")
-    public List<Event> getUserFeed(@PathVariable long id) {
+    public List<EventDto> getUserFeed(@PathVariable long id) {
         log.info("GET /users/{}/feed", id);
         return feedService.getUserFeed(id);
     }
