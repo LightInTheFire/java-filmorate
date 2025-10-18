@@ -14,14 +14,17 @@ import ru.yandex.practicum.filmorate.dto.genre.GenreDto;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.mapper.FilmMapper;
 import ru.yandex.practicum.filmorate.model.Director;
+import ru.yandex.practicum.filmorate.model.EventType;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Operation;
 import ru.yandex.practicum.filmorate.repository.director.DirectorRepository;
 import ru.yandex.practicum.filmorate.repository.film.FilmRepository;
 import ru.yandex.practicum.filmorate.repository.genre.GenreRepository;
 import ru.yandex.practicum.filmorate.repository.like.LikesRepository;
 import ru.yandex.practicum.filmorate.repository.mparating.MPARatingRepository;
 import ru.yandex.practicum.filmorate.repository.user.UserRepository;
+import ru.yandex.practicum.filmorate.service.feed.FeedService;
 
 import java.util.Collection;
 import java.util.List;
@@ -37,6 +40,7 @@ public class FilmServiceImpl implements FilmService {
     GenreRepository genreRepository;
     MPARatingRepository mpaRepository;
     DirectorRepository directorRepository;
+    FeedService feedService;
 
     @Override
     public Collection<FilmDto> findAll() {
@@ -137,6 +141,7 @@ public class FilmServiceImpl implements FilmService {
         throwIfFilmNotFound(filmId);
         throwIfUserNotFound(userId);
         likesRepository.addLike(userId, filmId);
+        feedService.addEvent(EventType.LIKE, Operation.ADD, userId, filmId);
         log.info("Like to film with id {} has been added by user {}", filmId, userId);
     }
 
@@ -145,6 +150,7 @@ public class FilmServiceImpl implements FilmService {
         throwIfFilmNotFound(filmId);
         throwIfUserNotFound(userId);
         likesRepository.removeLike(userId, filmId);
+        feedService.addEvent(EventType.LIKE, Operation.REMOVE, userId, filmId);
         log.info("Like to film with id {} has been removed by user {}", filmId, userId);
     }
 
