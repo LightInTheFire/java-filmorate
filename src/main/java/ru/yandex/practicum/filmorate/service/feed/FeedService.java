@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface FeedService {
     List<EventDto> getUserFeed(long userId);
-    
+
     void addEvent(EventType eventType, Operation operation, long userId, long entityId);
 }
