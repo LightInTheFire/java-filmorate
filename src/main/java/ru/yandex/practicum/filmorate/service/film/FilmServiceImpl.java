@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.service;
+package ru.yandex.practicum.filmorate.service.film;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +41,7 @@ public class FilmServiceImpl implements FilmService {
     GenreRepository genreRepository;
     MPARatingRepository mpaRepository;
     DirectorRepository directorRepository;
+    FeedService feedService;
 
     @Override
     public Collection<FilmDto> findAll() {
@@ -141,6 +142,8 @@ public class FilmServiceImpl implements FilmService {
         throwIfFilmNotFound(filmId);
         throwIfUserNotFound(userId);
         likesRepository.addLike(userId, filmId);
+
+        // Добавляем событие в ленту
         Event event = Event.builder()
                 .timestamp(System.currentTimeMillis())
                 .userId(userId)
@@ -149,6 +152,7 @@ public class FilmServiceImpl implements FilmService {
                 .entityId(filmId)
                 .build();
         feedService.addEvent(event);
+
         log.info("Like to film with id {} has been added by user {}", filmId, userId);
     }
 
@@ -157,6 +161,8 @@ public class FilmServiceImpl implements FilmService {
         throwIfFilmNotFound(filmId);
         throwIfUserNotFound(userId);
         likesRepository.removeLike(userId, filmId);
+
+        // Добавляем событие в ленту
         Event event = Event.builder()
                 .timestamp(System.currentTimeMillis())
                 .userId(userId)
@@ -165,6 +171,7 @@ public class FilmServiceImpl implements FilmService {
                 .entityId(filmId)
                 .build();
         feedService.addEvent(event);
+
         log.info("Like to film with id {} has been removed by user {}", filmId, userId);
     }
 

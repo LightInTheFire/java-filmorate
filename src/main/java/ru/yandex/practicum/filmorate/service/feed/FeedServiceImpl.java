@@ -20,7 +20,7 @@ public class FeedServiceImpl implements FeedService {
     @Override
     public List<Event> getUserFeed(long userId) {
         userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User with id %d not found", userId));
+                .orElseThrow(NotFoundException.supplier("User with id %d not found", userId));
 
         List<Event> events = feedRepository.findByUserId(userId);
         log.info("Retrieved {} events for user {}", events.size(), userId);
