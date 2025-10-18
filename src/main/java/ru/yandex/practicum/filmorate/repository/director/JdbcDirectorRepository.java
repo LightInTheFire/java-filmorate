@@ -70,4 +70,12 @@ public class JdbcDirectorRepository implements DirectorRepository {
 
         jdbc.update(deleteDirectorByIdSql, params);
     }
+
+    @Override
+    public List<Director> getByIds(List<Long> directorIds) {
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("list", directorIds);
+        String selectAllDirectorsByIdsSql = "SELECT * FROM directors WHERE director_id IN (:list)";
+        return jdbc.query(selectAllDirectorsByIdsSql, params, rowMapper);
+    }
 }

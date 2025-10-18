@@ -6,8 +6,8 @@ import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Builder
@@ -20,11 +20,7 @@ public class Film {
     Integer duration;
     MPARating mpaRating;
     @Builder.Default
-    Set<Genre> genres = new HashSet<>();
+    List<Genre> genres = new ArrayList<>();
     @Builder.Default
-    Set<Director> directors = new HashSet<>();
-
-    public void addGenre(Genre genre) {
-        this.genres.add(genre);
-    }
+    List<Director> directors = new ArrayList<>();
 }

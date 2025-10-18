@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.service;
+package ru.yandex.practicum.filmorate.service.review;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,8 +23,8 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public ReviewDto create(NewReviewRequest request) {
-        userExistenceCheck(request.getUserId());
-        filmExistenceCheck(request.getFilmId());
+        throwIfUserNotFound(request.getUserId());
+        throwIfFilmNotFound(request.getFilmId());
         Review review = ReviewMapper.toReview(request);
         review = reviewRepository.save(review);
         log.info("Review with reviewId {} has been created", review.getId());
@@ -33,7 +33,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public ReviewDto update(UpdateReviewRequest request) {
-        Review review = reviewExistenceCheck(request.getReviewId());
+        Review review = getReviewOrThrow(request.getReviewId());
         review = ReviewMapper.updateReviewFields(review, request);
         log.info("Review with reviewId {} has been updated", review.getId());
         reviewRepository.update(review);
@@ -42,19 +42,22 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public void delete(long id) {
-        reviewExistenceCheck(id);
+        getReviewOrThrow(id);
         log.info("Review with reviewId {} has been deleted", id);
         reviewRepository.delete(id);
     }
 
     @Override
     public ReviewDto findById(long id) {
-        return ReviewMapper.toDto(reviewExistenceCheck(id));
+        return ReviewMapper.toDto(getReviewOrThrow(id));
     }
 
     @Override
     public Collection<ReviewDto> findAllByFilm(Long filmId, long count) {
-        filmExistenceCheck(filmId);
+        if (filmId != null) {
+            throwIfFilmNotFound(filmId);
+        }
+
         return reviewRepository.findAllByFilm(filmId, count).stream()
                 .map(ReviewMapper::toDto)
                 .toList();
@@ -62,47 +65,47 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public void setLike(long id, long userId) {
-        reviewExistenceCheck(id);
-        userExistenceCheck(userId);
+        getReviewOrThrow(id);
+        throwIfUserNotFound(userId);
         log.info("Like to review {} has been added by user {}", id, userId);
         reviewRepository.setLike(id, userId);
     }
 
     @Override
     public void setDislike(long id, long userId) {
-        reviewExistenceCheck(id);
-        userExistenceCheck(userId);
+        getReviewOrThrow(id);
+        throwIfUserNotFound(userId);
         log.info("Dislike to review {} has been added by user {}", id, userId);
         reviewRepository.setDislike(id, userId);
     }
 
     @Override
     public void removeLike(long id, long userId) {
-        reviewExistenceCheck(id);
-        userExistenceCheck(userId);
+        getReviewOrThrow(id);
+        throwIfUserNotFound(userId);
         log.info("Like to review {} has been removed by user {}", id, userId);
         reviewRepository.removeLike(id, userId);
     }
 
     @Override
     public void removeDislike(long id, long userId) {
-        reviewExistenceCheck(id);
-        userExistenceCheck(userId);
+        getReviewOrThrow(id);
+        throwIfUserNotFound(userId);
         log.info("Dislike to review {} has been removed by user {}", id, userId);
         reviewRepository.removeDislike(id, userId);
     }
 
-    public Review reviewExistenceCheck(long id) {
+    private Review getReviewOrThrow(long id) {
         return reviewRepository.findById(id)
                 .orElseThrow(NotFoundException.supplier("Review with reviewId %d not found", id));
     }
 
-    public void userExistenceCheck(long id) {
+    private void throwIfUserNotFound(long id) {
         userRepository.findById(id)
                 .orElseThrow(NotFoundException.supplier("User with userId %d not found", id));
     }
 
-    public void filmExistenceCheck(long id) {
+    private void throwIfFilmNotFound(long id) {
         filmRepository.findById(id)
                 .orElseThrow(NotFoundException.supplier("Film with filmId %d not found", id));
     }

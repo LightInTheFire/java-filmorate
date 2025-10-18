@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.service;
+package ru.yandex.practicum.filmorate.service.film;
 
 import ru.yandex.practicum.filmorate.controller.FilmsSortBy;
 import ru.yandex.practicum.filmorate.dto.film.FilmDto;
