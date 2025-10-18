@@ -6,7 +6,7 @@ import ru.yandex.practicum.filmorate.model.Event;
 
 @UtilityClass
 public class EventMapper {
-    
+
     public EventDto toEventDto(Event event) {
         return EventDto.builder()
                 .timestamp(event.getTimestamp())
@@ -18,3 +18,4 @@ public class EventMapper {
                 .build();
     }
 }
+
