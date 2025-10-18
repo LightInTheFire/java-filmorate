@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.mapper.event;
+package ru.yandex.practicum.filmorate.dto.event;
 
 import lombok.Builder;
 import lombok.Data;
@@ -14,4 +14,5 @@ public class EventDto {
     private Operation operation;
     private Long eventId;
     private Long entityId;
+
 }
