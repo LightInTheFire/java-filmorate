@@ -90,16 +90,15 @@ public class JdbcFilmRepository implements FilmRepository {
 
         String deleteFilmGenresSql = """
                 DELETE FROM film_genres WHERE film_id = :film_id""";
-        MapSqlParameterSource deleteFilmGenresParams = new MapSqlParameterSource()
+        MapSqlParameterSource filmIdParams = new MapSqlParameterSource()
                 .addValue("film_id", film.getId());
-        jdbc.update(deleteFilmGenresSql, deleteFilmGenresParams);
+        jdbc.update(deleteFilmGenresSql, filmIdParams);
         saveGenres(film.getGenres(), film.getId());
 
         String deleteFilmDirectorsSql = """
                 DELETE FROM film_directors WHERE film_id = :film_id""";
-        MapSqlParameterSource deleteFilmDirectorsParams = new MapSqlParameterSource()
-                .addValue("film_id", film.getId());
-        jdbc.update(deleteFilmDirectorsSql, deleteFilmDirectorsParams);
+
+        jdbc.update(deleteFilmDirectorsSql, filmIdParams);
         saveDirectors(film.getDirectors(), film.getId());
     }
 

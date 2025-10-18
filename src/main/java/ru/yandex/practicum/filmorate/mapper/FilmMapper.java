@@ -6,7 +6,6 @@ import ru.yandex.practicum.filmorate.dto.film.NewFilmRequest;
 import ru.yandex.practicum.filmorate.dto.film.UpdateFilmRequest;
 import ru.yandex.practicum.filmorate.dto.genre.GenreDto;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
 
 @UtilityClass
 public class FilmMapper {
@@ -38,14 +37,13 @@ public class FilmMapper {
                 .mpaRating(MPARatingMapper.toMPARating(request.getMpa()))
                 .genres(request.getGenres()
                         .stream()
-                        .map(genreDto -> Genre.builder()
-                                .id(genreDto.id())
-                                .name(genreDto.name())
-                                .build())
+                        .map(GenreMapper::toGenre)
+                        .distinct()
                         .toList())
                 .directors(request.getDirectors()
                         .stream()
                         .map(DirectorMapper::toDirector)
+                        .distinct()
                         .toList())
                 .build();
     }
