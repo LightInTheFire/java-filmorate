@@ -31,8 +31,8 @@ CREATE TABLE IF NOT EXISTS films
     name                varchar(120) NOT NULL,
     description         varchar(200) NOT NULL,
     release_date        date         NOT NULL CHECK (release_date >= '1895-12-28'),
-    duration_in_minutes BIGINT      NOT NULL CHECK (duration_in_minutes > 0),
-    mpa_id              BIGINT      NOT NULL,
+    duration_in_minutes BIGINT       NOT NULL CHECK (duration_in_minutes > 0),
+    mpa_id              BIGINT       NOT NULL,
     FOREIGN KEY (mpa_id) REFERENCES mpa_ratings (mpa_id)
 );
 
@@ -65,11 +65,40 @@ CREATE TABLE IF NOT EXISTS likes
 
 CREATE TABLE IF NOT EXISTS friendships
 (
-    user_id1 BIGINT                      NOT NULL,
-    user_id2 BIGINT                      NOT NULL,
+    user_id1 BIGINT                       NOT NULL,
+    user_id2 BIGINT                       NOT NULL,
     status   ENUM ('pending', 'accepted') NOT NULL DEFAULT 'pending',
     PRIMARY KEY (user_id1, user_id2),
     FOREIGN KEY (user_id1) REFERENCES users (user_id) ON DELETE CASCADE,
     FOREIGN KEY (user_id2) REFERENCES users (user_id) ON DELETE CASCADE,
     CHECK (user_id1 <> user_id2)
+);
+
+CREATE TABLE IF NOT EXISTS reviews
+(
+    review_id     BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    content       VARCHAR(500) NOT NULL,
+    is_positive   BOOL         NOT NULL,
+    useful_rating BIGINT       NOT NULL DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS film_reviews
+(
+    review_id BIGINT NOT NULL UNIQUE,
+    film_id   BIGINT NOT NULL,
+    user_id   BIGINT NOT NULL,
+    PRIMARY KEY (film_id, user_id),
+    FOREIGN KEY (film_id) REFERENCES films (film_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE,
+    FOREIGN KEY (review_id) REFERENCES reviews (review_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS review_likes
+(
+    review_id   BIGINT NOT NULL,
+    user_id     BIGINT NOT NULL,
+    is_positive BOOL   NOT NULL,
+    PRIMARY KEY (review_id, user_id),
+    FOREIGN KEY (review_id) REFERENCES reviews (review_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
 );
