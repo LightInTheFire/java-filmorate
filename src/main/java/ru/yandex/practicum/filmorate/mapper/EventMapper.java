@@ -1,13 +1,13 @@
 package ru.yandex.practicum.filmorate.mapper;
 
-import org.springframework.stereotype.Component;
+import lombok.experimental.UtilityClass;
 import ru.yandex.practicum.filmorate.dto.event.EventDto;
 import ru.yandex.practicum.filmorate.model.Event;
 
-@Component
+@UtilityClass
 public class EventMapper {
-
-    public static EventDto toEventDto(Event event) {
+    
+    public EventDto toEventDto(Event event) {
         return EventDto.builder()
                 .timestamp(event.getTimestamp())
                 .userId(event.getUserId())
