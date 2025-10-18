@@ -5,5 +5,6 @@ import java.util.List;
 
 public interface FeedService {
     List<Event> getUserFeed(long userId);
+    
     void addEvent(Event event);
 }
