@@ -15,7 +15,6 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Repository
 @RequiredArgsConstructor
@@ -29,7 +28,8 @@ public class JdbcFilmRepository implements FilmRepository {
                 f.mpa_id,
                 mr.name                                                                                     AS mpa_name,
                 GROUP_CONCAT(DISTINCT CONCAT(g.genre_id, ':', g.name) ORDER BY g.genre_id SEPARATOR ';')    AS genres,
-                GROUP_CONCAT(DISTINCT CONCAT(d.director_id, ':', d.name) ORDER BY g.genre_id SEPARATOR ';') AS directors
+                GROUP_CONCAT(DISTINCT CONCAT(d.director_id, ':', d.name)
+                    ORDER BY d.director_id SEPARATOR ';') AS directors
                 FROM films f
                          JOIN mpa_ratings mr ON f.mpa_id = mr.mpa_id
                          LEFT JOIN film_genres fg ON f.film_id = fg.film_id
@@ -90,16 +90,15 @@ public class JdbcFilmRepository implements FilmRepository {
 
         String deleteFilmGenresSql = """
                 DELETE FROM film_genres WHERE film_id = :film_id""";
-        MapSqlParameterSource deleteFilmGenresParams = new MapSqlParameterSource()
+        MapSqlParameterSource filmIdParams = new MapSqlParameterSource()
                 .addValue("film_id", film.getId());
-        jdbc.update(deleteFilmGenresSql, deleteFilmGenresParams);
+        jdbc.update(deleteFilmGenresSql, filmIdParams);
         saveGenres(film.getGenres(), film.getId());
 
         String deleteFilmDirectorsSql = """
                 DELETE FROM film_directors WHERE film_id = :film_id""";
-        MapSqlParameterSource deleteFilmDirectorsParams = new MapSqlParameterSource()
-                .addValue("film_id", film.getId());
-        jdbc.update(deleteFilmDirectorsSql, deleteFilmDirectorsParams);
+
+        jdbc.update(deleteFilmDirectorsSql, filmIdParams);
         saveDirectors(film.getDirectors(), film.getId());
     }
 
@@ -171,13 +170,13 @@ public class JdbcFilmRepository implements FilmRepository {
     @Override
     public Collection<Film> findFilmRecommendations(long userId, long similarUserId) {
         String sqlRecommendations = BASE_SELECT_SQL.concat("""
-            LEFT JOIN likes l ON f.film_id = l.film_id
-            WHERE l.user_id = :similarUserId
-              AND f.film_id NOT IN (
-                  SELECT film_id FROM likes WHERE user_id = :userId
-              )
-            GROUP BY f.film_id
-            """);
+                LEFT JOIN likes l ON f.film_id = l.film_id
+                WHERE l.user_id = :similarUserId
+                  AND f.film_id NOT IN (
+                      SELECT film_id FROM likes WHERE user_id = :userId
+                  )
+                GROUP BY f.film_id
+                """);
 
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("similarUserId", similarUserId)
@@ -186,7 +185,7 @@ public class JdbcFilmRepository implements FilmRepository {
         return jdbc.query(sqlRecommendations, params, filmRowMapper);
     }
 
-    private void saveGenres(Set<Genre> genres, long filmId) {
+    private void saveGenres(Collection<Genre> genres, long filmId) {
         String insertGenresSql = """
                 INSERT INTO film_genres (film_id, genre_id)
                 VALUES (:film_id, :genre_id)""";
@@ -201,7 +200,7 @@ public class JdbcFilmRepository implements FilmRepository {
         jdbc.batchUpdate(insertGenresSql, batchParams);
     }
 
-    private void saveDirectors(Set<Director> directors, long filmId) {
+    private void saveDirectors(Collection<Director> directors, long filmId) {
         String insertDirectorsSql = """
                 INSERT INTO film_directors (film_id, director_id)
                 VALUES (:film_id, :director_id)""";
