@@ -78,6 +78,7 @@ public class JdbcReviewRepository implements ReviewRepository {
         MapSqlParameterSource params = new MapSqlParameterSource("review_id", id);
         List<Review> list = jdbc.query(BASE_SELECT_REVIEW_SQL.concat("""
                 WHERE r.review_id = :review_id
+                ORDER BY useful_rating DESC
                 """), params, mapper);
         return list.isEmpty() ? Optional.empty() : Optional.of(list.getFirst());
     }
@@ -88,6 +89,7 @@ public class JdbcReviewRepository implements ReviewRepository {
                 .addValue("count", count);
         return jdbc.query(BASE_SELECT_REVIEW_SQL.concat("""
                 WHERE fr.film_id = COALESCE(:film_id, fr.film_id)
+                ORDER BY useful_rating DESC
                 LIMIT :count
                 """), params, mapper);
     }
