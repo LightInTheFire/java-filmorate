@@ -6,6 +6,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.controller.FilmsSortBy;
+import ru.yandex.practicum.filmorate.controller.SearchFilmsBy;
 import ru.yandex.practicum.filmorate.dto.director.DirectorDto;
 import ru.yandex.practicum.filmorate.dto.film.FilmDto;
 import ru.yandex.practicum.filmorate.dto.film.NewFilmRequest;
@@ -13,11 +14,7 @@ import ru.yandex.practicum.filmorate.dto.film.UpdateFilmRequest;
 import ru.yandex.practicum.filmorate.dto.genre.GenreDto;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.mapper.FilmMapper;
-import ru.yandex.practicum.filmorate.model.Director;
-import ru.yandex.practicum.filmorate.model.EventType;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.Operation;
+import ru.yandex.practicum.filmorate.model.*;
 import ru.yandex.practicum.filmorate.repository.director.DirectorRepository;
 import ru.yandex.practicum.filmorate.repository.film.FilmRepository;
 import ru.yandex.practicum.filmorate.repository.genre.GenreRepository;
@@ -178,6 +175,14 @@ public class FilmServiceImpl implements FilmService {
         throwIfDirectorNotFound(directorId);
 
         return filmRepository.findFilmsOfDirector(directorId, sortFilmsBy)
+                .stream()
+                .map(FilmMapper::toFilmDto)
+                .toList();
+    }
+
+    @Override
+    public Collection<FilmDto> searchFilms(String query, List<SearchFilmsBy> searchFilmsBy) {
+        return filmRepository.searchFilms(query, searchFilmsBy)
                 .stream()
                 .map(FilmMapper::toFilmDto)
                 .toList();

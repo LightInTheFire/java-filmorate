@@ -1,11 +1,13 @@
 package ru.yandex.practicum.filmorate.service.film;
 
 import ru.yandex.practicum.filmorate.controller.FilmsSortBy;
+import ru.yandex.practicum.filmorate.controller.SearchFilmsBy;
 import ru.yandex.practicum.filmorate.dto.film.FilmDto;
 import ru.yandex.practicum.filmorate.dto.film.NewFilmRequest;
 import ru.yandex.practicum.filmorate.dto.film.UpdateFilmRequest;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface FilmService {
     Collection<FilmDto> findAll();
@@ -27,4 +29,6 @@ public interface FilmService {
     Collection<FilmDto> findCommonFilms(long userId, long friendId);
 
     Collection<FilmDto> findFilmsOfDirector(long directorId, FilmsSortBy sortFilmsBy);
+
+    Collection<FilmDto> searchFilms(String query, List<SearchFilmsBy> searchFilmsBy);
 }
