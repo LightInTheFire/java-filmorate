@@ -14,8 +14,10 @@ public class JdbcLikesRepository implements LikesRepository {
     public void addLike(long userId, long filmId) {
         MapSqlParameterSource params = getParameterMap(userId, filmId);
         String addLikeToFilmSql = """
-                INSERT INTO likes (user_id, film_id)
-                VALUES (:user_id, :film_id)""";
+                MERGE INTO likes (user_id, film_id)
+                KEY(user_id, film_id)
+                VALUES (:user_id, :film_id)
+                """;
 
         jdbc.update(addLikeToFilmSql, params);
     }

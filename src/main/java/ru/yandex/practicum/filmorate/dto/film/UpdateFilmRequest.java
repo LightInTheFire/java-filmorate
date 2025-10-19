@@ -14,6 +14,7 @@ import ru.yandex.practicum.filmorate.dto.mparating.MPARatingDto;
 import ru.yandex.practicum.filmorate.validation.AfterDate;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -30,12 +31,8 @@ public class UpdateFilmRequest {
     Integer duration;
     MPARatingDto mpa;
     List<GenreDto> genres;
-    List<DirectorDto> directors;
-
     @JsonSetter(nulls = Nulls.AS_EMPTY)
-    public void setDirectors(List<DirectorDto> directors) {
-        this.directors = directors;
-    }
+    List<DirectorDto> directors = new ArrayList<>();
 
     public boolean hasName() {
         return name != null && !name.isEmpty();
