@@ -8,10 +8,12 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.controller.FilmsSortBy;
+import ru.yandex.practicum.filmorate.controller.SearchFilmsBy;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -183,6 +185,37 @@ public class JdbcFilmRepository implements FilmRepository {
                 .addValue("userId", userId);
 
         return jdbc.query(sqlRecommendations, params, filmRowMapper);
+    }
+
+    @Override
+    public Collection<Film> searchFilms(String query, List<SearchFilmsBy> searchBy) {
+        String searchParamName = "query";
+        String searchFilmsSql = buildSearchSql(searchBy, searchParamName);
+        String searchPattern = "%%%s%%".formatted(query.toLowerCase());
+
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue(searchParamName, searchPattern);
+
+        return jdbc.query(searchFilmsSql, params, filmRowMapper);
+    }
+
+    private String buildSearchSql(List<SearchFilmsBy> searchFilmsBy, String searchParamName) {
+        List<String> conditions = new ArrayList<>();
+
+        for (SearchFilmsBy searchBy : searchFilmsBy) {
+            switch (searchBy) {
+                case TITLE -> conditions.add("LOWER(f.name) LIKE :%s".formatted(searchParamName));
+                case DIRECTOR -> conditions.add("LOWER(d.name) LIKE :%s".formatted(searchParamName));
+            }
+        }
+
+        String whereClause = String.join(" OR ", conditions);
+
+        return BASE_SELECT_SQL.concat("""
+                WHERE (%s)
+                GROUP BY f.film_id
+                ORDER BY (SELECT COUNT(*) FROM likes l WHERE l.film_id = f.film_id) DESC, f.film_id""".formatted(
+                whereClause));
     }
 
     private void saveGenres(Collection<Genre> genres, long filmId) {

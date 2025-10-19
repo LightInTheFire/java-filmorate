@@ -1,9 +1,11 @@
 package ru.yandex.practicum.filmorate.repository.film;
 
 import ru.yandex.practicum.filmorate.controller.FilmsSortBy;
+import ru.yandex.practicum.filmorate.controller.SearchFilmsBy;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 public interface FilmRepository {
@@ -24,4 +26,6 @@ public interface FilmRepository {
     Collection<Film> findFilmsOfDirector(long directorId, FilmsSortBy sortFilmsBy);
 
     Collection<Film> findFilmRecommendations(long userId, long similarUserId);
+
+    Collection<Film> searchFilms(String query, List<SearchFilmsBy> searchBy);
 }

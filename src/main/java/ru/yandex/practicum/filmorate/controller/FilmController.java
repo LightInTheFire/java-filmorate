@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +14,7 @@ import ru.yandex.practicum.filmorate.dto.film.UpdateFilmRequest;
 import ru.yandex.practicum.filmorate.service.film.FilmService;
 
 import java.util.Collection;
+import java.util.List;
 
 @RestController
 @RequestMapping("/films")
@@ -67,6 +69,22 @@ public class FilmController {
                            @PathVariable long userId) {
         log.trace("Delete like requested film id: {}, user id: {}", id, userId);
         filmService.removeLike(id, userId);
+    }
+
+    @GetMapping("/search")
+    public Collection<FilmDto> searchFilms(@RequestParam @NotBlank String query,
+                                           @RequestParam(defaultValue = "title") String by) {
+        log.trace("Search films requested with query: {}, by: {}", query, by);
+
+        List<SearchFilmsBy> parsedInput = SearchFilmsBy.parseStr(by);
+
+        for (SearchFilmsBy searchFilmsBy : parsedInput) {
+            if (searchFilmsBy == null) {
+                throw new IllegalArgumentException("Unknown search params %s".formatted(by));
+            }
+        }
+
+        return filmService.searchFilms(query, parsedInput);
     }
 
     @GetMapping("/common")
