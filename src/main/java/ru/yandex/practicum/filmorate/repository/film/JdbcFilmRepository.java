@@ -28,10 +28,15 @@ public class JdbcFilmRepository implements FilmRepository {
                 f.release_date,
                 f.duration_in_minutes,
                 f.mpa_id,
-                mr.name                                                                                     AS mpa_name,
-                GROUP_CONCAT(DISTINCT CONCAT(g.genre_id, ':', g.name) ORDER BY g.genre_id SEPARATOR ';')    AS genres,
-                GROUP_CONCAT(DISTINCT CONCAT(d.director_id, ':', d.name)
-                    ORDER BY d.director_id SEPARATOR ';') AS directors
+                mr.name AS mpa_name,
+                (SELECT GROUP_CONCAT(DISTINCT CONCAT(g2.genre_id, ':', g2.name) ORDER BY g2.genre_id SEPARATOR ';')
+                        FROM film_genres fg2
+                        JOIN genres g2 ON g2.genre_id = fg2.genre_id
+                        WHERE fg2.film_id = f.film_id) AS genres,
+                (SELECT GROUP_CONCAT(DISTINCT CONCAT(d2.director_id, ':', d2.name) ORDER BY d2.director_id SEPARATOR ';')
+                        FROM film_directors fd2
+                        JOIN directors d2 ON d2.director_id = fd2.director_id
+                        WHERE fd2.film_id = f.film_id) AS directors
                 FROM films f
                          JOIN mpa_ratings mr ON f.mpa_id = mr.mpa_id
                          LEFT JOIN film_genres fg ON f.film_id = fg.film_id
