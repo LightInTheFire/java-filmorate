@@ -25,7 +25,7 @@ public interface FilmRepository {
 
     Collection<Film> findFilmsOfDirector(long directorId, FilmsSortBy sortFilmsBy);
 
-    Collection<Film> findFilmRecommendations(long userId, long similarUserId);
+    Collection<Film> findFilmRecommendations(long userId, List<Long> similarUserIds);
 
     Collection<Film> searchFilms(String query, List<SearchFilmsBy> searchBy);
 }
