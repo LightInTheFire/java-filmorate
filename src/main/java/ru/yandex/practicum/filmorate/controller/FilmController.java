@@ -44,14 +44,12 @@ public class FilmController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Validated
     public FilmDto create(@RequestBody @Valid NewFilmRequest request) {
         log.trace("Create new film requested {}", request);
         return filmService.create(request);
     }
 
     @PutMapping
-    @Validated
     public FilmDto update(@RequestBody @Valid UpdateFilmRequest request) {
         log.trace("Update film requested {}", request);
         return filmService.update(request);

@@ -36,14 +36,12 @@ public class DirectorController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Validated
     public DirectorDto create(@RequestBody @Valid NewDirectorRequest request) {
         log.trace("Create new director requested: {}", request);
         return directorService.create(request);
     }
 
     @PutMapping
-    @Validated
     public DirectorDto update(@RequestBody @Valid UpdateDirectorRequest request) {
         log.trace("Update director requested: {}", request);
         return directorService.update(request);
