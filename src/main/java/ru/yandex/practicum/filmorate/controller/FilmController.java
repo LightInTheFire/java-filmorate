@@ -74,13 +74,8 @@ public class FilmController {
                                            @RequestParam(defaultValue = "title") String by) {
         log.trace("Search films requested with query: {}, by: {}", query, by);
 
-        List<SearchFilmsBy> parsedInput = SearchFilmsBy.parseStr(by);
-
-        for (SearchFilmsBy searchFilmsBy : parsedInput) {
-            if (searchFilmsBy == null) {
-                throw new IllegalArgumentException("Unknown search params %s".formatted(by));
-            }
-        }
+        List<SearchFilmsBy> parsedInput = SearchFilmsBy.parseStrOrThrow(by, () ->
+                new IllegalArgumentException("Invalid search films requested: " + by));
 
         return filmService.searchFilms(query, parsedInput);
     }
@@ -104,10 +99,8 @@ public class FilmController {
     public Collection<FilmDto> findFilmsOfDirector(@PathVariable @Positive long directorId,
                                                    @RequestParam String sortBy) {
 
-        FilmsSortBy sortFilmsBy = FilmsSortBy.fromString(sortBy);
-        if (sortFilmsBy == null) {
-            throw new IllegalArgumentException("invalid sort by: %s".formatted(sortBy));
-        }
+        FilmsSortBy sortFilmsBy = FilmsSortBy.fromString(sortBy).orElseThrow(
+                () -> new IllegalArgumentException("invalid sort by: %s".formatted(sortBy)));
 
         log.trace("Find films of director with id {} requested", directorId);
         return filmService.findFilmsOfDirector(directorId, sortFilmsBy);
