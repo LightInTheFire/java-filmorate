@@ -1,39 +1,31 @@
-FROM amazoncorretto:21.0.8 AS builder
+FROM maven:3.9.11-amazoncorretto-21-alpine AS builder
 
 # Set working directory
 WORKDIR /app
 
-# Install tar and gzip (required for mvnw to unpack Maven)
-RUN yum install -y tar gzip && yum clean all
-
-COPY mvnw ./
-COPY .mvn ./.mvn
 COPY pom.xml ./
 COPY lombok.config ./
-
-# Ensure mvnw is executable
-RUN chmod +x mvnw
 
 # Set up Maven local repository for caching
 ENV MAVEN_OPTS="-Dmaven.repo.local=/app/.m2/repository"
 
 # Download dependencies (caching layer)
-RUN ./mvnw dependency:go-offline -B
+RUN mvn dependency:go-offline -B
 
 # Copy source code
 COPY src ./src
 
 # Build the application (skip tests for faster build)
-RUN ./mvnw clean package -DskipTests -Dcheckstyle.skip=true
+RUN mvn clean package -DskipTests -Dcheckstyle.skip=true
 
-# Stage 2: Layers stage - Use Amazon Corretto JDK for layer extraction
+# Stage 2: Layers stage
 FROM amazoncorretto:21.0.8-alpine AS layers
 WORKDIR /app
 COPY --from=builder /app/target/*.jar app.jar
-# Extract layers from the JAR for better caching in runtime (Spring Boot specific best practice)
+# Extract layers from the JAR for better caching in runtime
 RUN java -Djarmode=layertools -jar app.jar extract
 
-# Stage 3: Runtime stage - Use a slim Amazon Corretto image for smaller footprint
+# Stage 3: Runtime stage
 FROM amazoncorretto:21.0.8-alpine
 
 # Set non-root user for security
