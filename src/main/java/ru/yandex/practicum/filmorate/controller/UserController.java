@@ -46,14 +46,12 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Validated
     public UserDto create(@RequestBody @Valid NewUserRequest user) {
         log.trace("create new user requested {}", user);
         return userService.create(user);
     }
 
     @PutMapping
-    @Validated
     public UserDto update(@RequestBody @Valid UpdateUserRequest user) {
         log.trace("Update user requested {}", user);
         return userService.update(user);

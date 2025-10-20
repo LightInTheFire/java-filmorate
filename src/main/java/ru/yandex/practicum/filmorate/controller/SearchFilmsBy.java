@@ -2,8 +2,11 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.Getter;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 @Getter
 public enum SearchFilmsBy {
@@ -16,23 +19,24 @@ public enum SearchFilmsBy {
         this.value = value;
     }
 
-    public static List<SearchFilmsBy> parseStr(String value) {
+    public static <T extends Throwable> List<SearchFilmsBy> parseStrOrThrow(String value,
+                                                                            Supplier<T> exceptionSupplier) throws T {
         String[] splittedStr = value.trim().toLowerCase().split(",");
         List<SearchFilmsBy> parsedList = new ArrayList<>();
 
         for (String str : splittedStr) {
-            SearchFilmsBy searchFilmsBy = SearchFilmsBy.fromString(str);
-            parsedList.add(searchFilmsBy);
+            parsedList.add(SearchFilmsBy.fromString(str)
+                    .orElseThrow(exceptionSupplier));
         }
 
         return parsedList;
     }
 
-    public static SearchFilmsBy fromString(String value) {
+    public static Optional<SearchFilmsBy> fromString(String value) {
         return switch (value) {
-            case "title" -> SearchFilmsBy.TITLE;
-            case "director" -> SearchFilmsBy.DIRECTOR;
-            default -> null;
+            case "title" -> Optional.of(TITLE);
+            case "director" -> Optional.of(DIRECTOR);
+            default -> Optional.empty();
         };
     }
 
