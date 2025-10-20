@@ -115,7 +115,7 @@ public class JdbcUserRepository implements UserRepository {
         return jdbc.query(selectCommonFriendsSql, params, rowMapper);
     }
 
-    public Optional<Long> findSimilarFilmTasteUser(long userId) {
+    public List<Long> findSimilarFilmTasteUsers(long userId) {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("userId", userId);
 
@@ -128,15 +128,8 @@ public class JdbcUserRepository implements UserRepository {
           AND l2.user_id != :userId
         GROUP BY l2.user_id
         ORDER BY common_like_count DESC
-        LIMIT 1""";
+        LIMIT 5""";
 
-        Long result = jdbc.query(sql, params, rs -> {
-            if (rs.next()) {
-                return rs.getObject("other_user", Long.class);
-            }
-            return null;
-        });
-
-        return Optional.ofNullable(result);
+        return jdbc.query(sql, params, (rs, rowNum) -> rs.getLong("other_user"));
     }
 }

@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.repository.user;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository {
@@ -20,5 +21,5 @@ public interface UserRepository {
 
     Collection<User> findAllCommonFriends(long userId1, long userId2);
 
-    Optional<Long> findSimilarFilmTasteUser(long userId);
+    List<Long> findSimilarFilmTasteUsers(long userId);
 }
