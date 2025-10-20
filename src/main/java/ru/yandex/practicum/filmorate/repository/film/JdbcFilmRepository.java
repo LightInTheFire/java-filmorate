@@ -183,7 +183,7 @@ public class JdbcFilmRepository implements FilmRepository {
                       SELECT film_id FROM likes WHERE user_id = :userId
                   )
                 GROUP BY f.film_id
-                ORDER BY COUNT(l.user_id) DESC
+                ORDER BY COUNT(DISTINCT l.user_id) DESC
                 """);
 
         MapSqlParameterSource params = new MapSqlParameterSource()
