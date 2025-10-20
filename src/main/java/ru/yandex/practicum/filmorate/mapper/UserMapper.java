@@ -10,13 +10,12 @@ import ru.yandex.practicum.filmorate.model.User;
 @UtilityClass
 public class UserMapper {
     public UserDto toUserDto(User user) {
-        return UserDto.builder()
-                .id(user.getId())
-                .email(user.getEmail())
-                .login(user.getLogin())
-                .name(user.getName())
-                .birthday(user.getBirthday())
-                .build();
+        return new UserDto(
+                user.getId(),
+                user.getEmail(),
+                user.getLogin(),
+                user.getName(),
+                user.getBirthday());
     }
 
     public User mapToUser(NewUserRequest request) {
