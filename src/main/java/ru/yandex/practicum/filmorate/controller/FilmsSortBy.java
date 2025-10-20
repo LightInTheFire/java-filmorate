@@ -1,14 +1,16 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import java.util.Optional;
+
 public enum FilmsSortBy {
     YEAR,
     LIKES;
 
-    public static FilmsSortBy fromString(String sortBy) {
+    public static Optional<FilmsSortBy> fromString(String sortBy) {
         return switch (sortBy.toLowerCase()) {
-            case "year" -> YEAR;
-            case "likes" -> LIKES;
-            default -> null;
+            case "year" -> Optional.of(YEAR);
+            case "likes" -> Optional.of(LIKES);
+            default -> Optional.empty();
         };
     }
 }

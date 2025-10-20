@@ -125,7 +125,7 @@ public class JdbcFilmRepository implements FilmRepository {
                 WHERE (g.genre_id = :genreId OR :genreId IS NULL)
                 AND (YEAR(f.release_date) =:year OR :year IS NULL)
                 GROUP BY f.film_id
-                ORDER BY COUNT(fl.user_id) DESC, f.film_id
+                ORDER BY COUNT(DISTINCT fl.user_id) DESC, f.film_id
                 LIMIT :count""");
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("count", count)
@@ -147,7 +147,7 @@ public class JdbcFilmRepository implements FilmRepository {
                                     FROM likes l2
                                     WHERE l2.user_id = :friend_id)
                 GROUP BY f.film_id, g.genre_id
-                ORDER BY COUNT(fl.user_id) DESC, f.film_id
+                ORDER BY COUNT(DISTINCT fl.user_id) DESC, f.film_id
                 """);
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("user_id", userId)
@@ -160,7 +160,7 @@ public class JdbcFilmRepository implements FilmRepository {
     public Collection<Film> findFilmsOfDirector(long directorId, FilmsSortBy sortFilmsBy) {
         String sortBySql = switch (sortFilmsBy) {
             case YEAR -> "EXTRACT(YEAR from f.release_date)";
-            case LIKES -> "COUNT(fl.user_id) DESC";
+            case LIKES -> "COUNT(DISTINCT fl.user_id) DESC";
         };
 
         String selectFilmsOfDirectorSortedSql = BASE_SELECT_SQL.concat("""

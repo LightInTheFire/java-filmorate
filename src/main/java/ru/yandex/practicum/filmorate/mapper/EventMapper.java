@@ -8,14 +8,12 @@ import ru.yandex.practicum.filmorate.model.Event;
 public class EventMapper {
 
     public EventDto toEventDto(Event event) {
-        return EventDto.builder()
-                .timestamp(event.getTimestamp())
-                .userId(event.getUserId())
-                .eventType(event.getEventType())
-                .operation(event.getOperation())
-                .eventId(event.getEventId())
-                .entityId(event.getEntityId())
-                .build();
+        return new EventDto(
+                event.getTimestamp(),
+                event.getUserId(),
+                event.getEventType(),
+                event.getOperation(),
+                event.getEventId(),
+                event.getEntityId());
     }
 }
-

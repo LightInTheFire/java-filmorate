@@ -1,0 +1,13 @@
+services:
+  filmorate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - maven-repo:/app/.m2/repository
+      - ./db:/app/db
+
+volumes:
+  maven-repo: {}

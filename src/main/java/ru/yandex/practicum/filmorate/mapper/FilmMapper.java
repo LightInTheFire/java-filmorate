@@ -4,28 +4,26 @@ import lombok.experimental.UtilityClass;
 import ru.yandex.practicum.filmorate.dto.film.FilmDto;
 import ru.yandex.practicum.filmorate.dto.film.NewFilmRequest;
 import ru.yandex.practicum.filmorate.dto.film.UpdateFilmRequest;
-import ru.yandex.practicum.filmorate.dto.genre.GenreDto;
 import ru.yandex.practicum.filmorate.model.Film;
 
 @UtilityClass
 public class FilmMapper {
     public FilmDto toFilmDto(Film film) {
-        return FilmDto.builder()
-                .id(film.getId())
-                .description(film.getDescription())
-                .name(film.getName())
-                .releaseDate(film.getReleaseDate())
-                .duration(film.getDuration())
-                .mpa(MPARatingMapper.toMPARatingDto(film.getMpaRating()))
-                .genres(film.getGenres()
+        return new FilmDto(
+                film.getId(),
+                film.getName(),
+                film.getDescription(),
+                film.getReleaseDate(),
+                film.getDuration(),
+                MPARatingMapper.toMPARatingDto(film.getMpaRating()),
+                film.getGenres()
                         .stream()
-                        .map(genre -> new GenreDto(genre.getId(), genre.getName()))
-                        .toList())
-                .directors(film.getDirectors()
+                        .map(GenreMapper::toGenreDto)
+                        .toList(),
+                film.getDirectors()
                         .stream()
                         .map(DirectorMapper::toDirectorDto)
-                        .toList())
-                .build();
+                        .toList());
     }
 
     public Film toFilm(NewFilmRequest request) {
