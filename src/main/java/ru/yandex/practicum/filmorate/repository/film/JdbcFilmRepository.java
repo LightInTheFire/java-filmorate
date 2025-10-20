@@ -175,18 +175,19 @@ public class JdbcFilmRepository implements FilmRepository {
     }
 
     @Override
-    public Collection<Film> findFilmRecommendations(long userId, long similarUserId) {
+    public Collection<Film> findFilmRecommendations(long userId, List<Long> similarUserIds) {
         String sqlRecommendations = BASE_SELECT_SQL.concat("""
                 LEFT JOIN likes l ON f.film_id = l.film_id
-                WHERE l.user_id = :similarUserId
+                WHERE l.user_id IN (:similarUserIds)
                   AND f.film_id NOT IN (
                       SELECT film_id FROM likes WHERE user_id = :userId
                   )
                 GROUP BY f.film_id
+                ORDER BY COUNT(l.user_id) DESC
                 """);
 
         MapSqlParameterSource params = new MapSqlParameterSource()
-                .addValue("similarUserId", similarUserId)
+                .addValue("similarUserIds", similarUserIds)
                 .addValue("userId", userId);
 
         return jdbc.query(sqlRecommendations, params, filmRowMapper);
