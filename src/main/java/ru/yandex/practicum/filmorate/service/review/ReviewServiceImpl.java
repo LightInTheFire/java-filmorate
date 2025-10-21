@@ -3,13 +3,12 @@ package ru.yandex.practicum.filmorate.service.review;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.dto.review.NewReviewRequest;
-import ru.yandex.practicum.filmorate.dto.review.ReviewDto;
-import ru.yandex.practicum.filmorate.dto.review.UpdateReviewRequest;
+import ru.yandex.practicum.filmorate.dto.review.*;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.mapper.ReviewMapper;
 import ru.yandex.practicum.filmorate.model.EventType;
 import ru.yandex.practicum.filmorate.model.Operation;
+import ru.yandex.practicum.filmorate.model.Reaction;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.repository.film.FilmRepository;
 import ru.yandex.practicum.filmorate.repository.review.ReviewRepository;
@@ -77,7 +76,7 @@ public class ReviewServiceImpl implements ReviewService {
         getReviewOrThrow(id);
         throwIfUserNotFound(userId);
         log.info("Like to review {} has been added by user {}", id, userId);
-        reviewRepository.setLike(id, userId);
+        reviewRepository.setReaction(id, userId, Reaction.LIKE);
     }
 
     @Override
@@ -85,23 +84,18 @@ public class ReviewServiceImpl implements ReviewService {
         getReviewOrThrow(id);
         throwIfUserNotFound(userId);
         log.info("Dislike to review {} has been added by user {}", id, userId);
-        reviewRepository.setDislike(id, userId);
+        reviewRepository.setReaction(id, userId, Reaction.DISLIKE);
     }
 
     @Override
-    public void removeLike(long id, long userId) {
+    public void removeReaction(long id, long userId, Reaction reaction) {
         getReviewOrThrow(id);
         throwIfUserNotFound(userId);
-        log.info("Like to review {} has been removed by user {}", id, userId);
-        reviewRepository.removeLike(id, userId);
-    }
-
-    @Override
-    public void removeDislike(long id, long userId) {
-        getReviewOrThrow(id);
-        throwIfUserNotFound(userId);
-        log.info("Dislike to review {} has been removed by user {}", id, userId);
-        reviewRepository.removeDislike(id, userId);
+        switch (reaction) {
+            case LIKE -> log.info("Like to review {} has been removed by user {}", id, userId);
+            case DISLIKE ->  log.info("Dislike to review {} has been removed by user {}", id, userId);
+        }
+        reviewRepository.removeReaction(id, userId);
     }
 
     private Review getReviewOrThrow(long id) {

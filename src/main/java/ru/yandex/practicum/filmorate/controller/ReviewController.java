@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.dto.review.NewReviewRequest;
 import ru.yandex.practicum.filmorate.dto.review.ReviewDto;
 import ru.yandex.practicum.filmorate.dto.review.UpdateReviewRequest;
+import ru.yandex.practicum.filmorate.model.Reaction;
 import ru.yandex.practicum.filmorate.service.review.ReviewService;
 
 import java.util.Collection;
@@ -72,13 +73,13 @@ public class ReviewController {
     public void removeLike(@PathVariable @Positive long id,
                            @PathVariable @Positive long userId) {
         log.trace("Remove review like by reviewId: {}, from userId: {}", id, userId);
-        reviewService.removeLike(id, userId);
+        reviewService.removeReaction(id, userId, Reaction.LIKE);
     }
 
     @DeleteMapping("/{id}/dislike/{userId}")
     public void removeDislike(@PathVariable @Positive long id,
                               @PathVariable @Positive long userId) {
         log.trace("Remove review dislike by reviewId: {}, from userId: {}", id, userId);
-        reviewService.removeDislike(id, userId);
+        reviewService.removeReaction(id, userId, Reaction.DISLIKE);
     }
 }
