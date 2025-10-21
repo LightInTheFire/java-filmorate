@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.model.Reaction;
 import ru.yandex.practicum.filmorate.model.Review;
 
 import java.util.Collection;
@@ -25,10 +26,6 @@ public class JdbcReviewRepository implements ReviewRepository {
             FROM reviews r
             JOIN film_reviews fr ON r.review_id = fr.review_id
             """;
-    private static final int UP_UR = 1;
-    private static final int DOUBLE_UP_UR = 2;
-    private static final int DROP_UR = -1;
-    private static final int DOUBLE_DROP_UR = -2;
     private final NamedParameterJdbcOperations jdbc;
     private final RowMapper<Review> mapper;
 
@@ -95,59 +92,30 @@ public class JdbcReviewRepository implements ReviewRepository {
     }
 
     @Override
-    public void setLike(long id, long userId) {
+    public void setReaction(long id, long userId, Reaction reaction) {
         MapSqlParameterSource params = new MapSqlParameterSource("review_id", id)
                 .addValue("user_id", userId);
-        Boolean isPositiveYet = isPositive(params);
+        switch (reaction) {
+            case LIKE -> params.addValue("is_positive", true);
+            case DISLIKE -> params.addValue("is_positive", false);
+        }
         jdbc.update("""
                 MERGE INTO review_likes (review_id, user_id, is_positive)
                 KEY (review_id, user_id)
-                VALUES (:review_id, :user_id, TRUE)
+                VALUES (:review_id, :user_id, :is_positive)
                 """, params);
-        if (isPositiveYet == null) {
-            changeUsefulRating(params, UP_UR);
-        } else if (isPositiveYet) {
-            changeUsefulRating(params, DOUBLE_UP_UR);
-        }
+        updateUsefulRating(params);
     }
 
     @Override
-    public void setDislike(long id, long userId) {
-        MapSqlParameterSource params = new MapSqlParameterSource("review_id", id)
-                .addValue("user_id", userId);
-        Boolean isPositiveYet = isPositive(params);
-        jdbc.update("""
-                MERGE INTO review_likes (review_id, user_id, is_positive)
-                KEY (review_id, user_id)
-                VALUES (:review_id, :user_id, FALSE)
-                """, params);
-        if (isPositiveYet == null) {
-            changeUsefulRating(params, DROP_UR);
-        } else if (isPositiveYet) {
-            changeUsefulRating(params, DOUBLE_DROP_UR);
-        }
-    }
-
-    @Override
-    public void removeLike(long id, long userId) {
+    public void removeReaction(long id, long userId) {
         MapSqlParameterSource params = new MapSqlParameterSource("review_id", id)
                 .addValue("user_id", userId);
         jdbc.update("""
                 DELETE FROM review_likes
                 WHERE review_id = :review_id AND user_id = :user_id
                 """, params);
-        changeUsefulRating(params, DROP_UR);
-    }
-
-    @Override
-    public void removeDislike(long id, long userId) {
-        MapSqlParameterSource params = new MapSqlParameterSource("review_id", id)
-                .addValue("user_id", userId);
-        jdbc.update("""
-                DELETE FROM review_likes
-                WHERE review_id = :review_id AND user_id = :user_id
-                """, params);
-        changeUsefulRating(params, UP_UR);
+        updateUsefulRating(params);
     }
 
     private MapSqlParameterSource getBaseParams(Review review) {
@@ -156,21 +124,15 @@ public class JdbcReviewRepository implements ReviewRepository {
                 .addValue("is_Positive", review.getIsPositive());
     }
 
-    private Boolean isPositive(MapSqlParameterSource params) {
-        List<Boolean> list = jdbc.query("""
-                SELECT is_positive
-                FROM review_likes
-                WHERE review_id = :review_id AND user_id = :user_id
-                """, params, (rs, rowNum) -> rs.getBoolean("is_positive"));
-        return list.isEmpty() ? null : list.getFirst();
-    }
-
-    private void changeUsefulRating(MapSqlParameterSource params, int points) {
-        params.addValue("points", points);
+    private void updateUsefulRating(MapSqlParameterSource params) {
         jdbc.update("""
-                UPDATE reviews
-                SET useful_rating = useful_rating + :points
-                WHERE review_id = :review_id
+                UPDATE reviews r
+                SET useful_rating = COALESCE((
+                        SELECT SUM(CASE WHEN is_positive THEN 1 ELSE -1 END)
+                        FROM review_likes rl
+                        WHERE rl.review_id = r.review_id),
+                    0)
+                WHERE r.review_id = :review_id;
                 """, params);
     }
 }
