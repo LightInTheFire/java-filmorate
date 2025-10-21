@@ -128,10 +128,10 @@ public class JdbcReviewRepository implements ReviewRepository {
         jdbc.update("""
                 UPDATE reviews r
                 SET useful_rating = COALESCE((
-                    SELECT SUM(CASE WHEN is_positive = TRUE THEN 1 ELSE 0 END) -
-                           SUM(CASE WHEN is_positive = FALSE THEN 1 ELSE 0 END)
-                    FROM review_likes rl
-                    WHERE rl.review_id = r.review_id), 0)
+                        SELECT SUM(CASE WHEN is_positive THEN 1 ELSE -1 END)
+                        FROM review_likes rl
+                        WHERE rl.review_id = r.review_id),
+                    0)
                 WHERE r.review_id = :review_id;
                 """, params);
     }
